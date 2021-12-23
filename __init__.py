@@ -8,7 +8,7 @@ from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
 from .utils import check_auth, send
-from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, TMP_DIR
+from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK
 
 
 class Api(MycroftSkill):
@@ -164,11 +164,10 @@ class Api(MycroftSkill):
         check_auth(self, message)
         if self.authenticated:
             try:
-                sleep_mark: str = Path(f"{TMP_DIR}/sleepy.mark")
-                sleep_mark.touch()
+                Path(SLEEP_MARK).touch()
                 send(self,
                      f'{CONSTANT_MSG_TYPE["sleep"]}.answer',
-                     data={"mark": sleep_mark})
+                     data={"mark": SLEEP_MARK})
             except IOError as err:
                 self.log.err(err)
 

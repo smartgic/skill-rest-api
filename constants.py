@@ -10,3 +10,5 @@ CONSTANT_MSG_TYPE = {
 }
 SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 TMP_DIR = "/tmp/mycroft"
+SLEEP_MARK = f"{TMP_DIR}/sleep.mark"
+AWAKE_MARK = f"{TMP_DIR}/awake.mark"
