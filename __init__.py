@@ -115,8 +115,8 @@ class Api(MycroftSkill):
         will use the LocalConf() function from mycroft core to retrieve the
         "custom" configuration from mycroft.conf.
 
-        If message.data.get('core') is True then only the core configuration
-        will be retrieved.
+        If message.data.get('core') is True then the core and local
+        configurations will be retrieved.
         """
         self.log.debug("mycroft.api.config message detected")
         check_auth(self, message)
