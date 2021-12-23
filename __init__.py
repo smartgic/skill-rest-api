@@ -35,7 +35,7 @@ class Api(MycroftSkill):
             self.configured = True
             self.log.info("api key has been registered")
 
-    def _handle_events(self) -> None:
+    def handle_events(self) -> None:
         """Handle the events sent on the bus and trigger functions when
         received.
         """
@@ -49,6 +49,7 @@ class Api(MycroftSkill):
         """
         self.settings_change_callback = self.on_websettings_changed
         self.on_websettings_changed()
+        self.handle_events()
 
     def on_websettings_changed(self) -> None:
         """Each Mycroft device will check for updates to a users settings
@@ -57,15 +58,41 @@ class Api(MycroftSkill):
         """
         self._setup()
 
-    def _handle_info(self, message):
+    def _handle_info(self, message: dict) -> None:
         """When mycroft.api.info event is detected on the bus, this function
         will collect information from local and remote location.
 
         If there is no Internet connection then only local information will
         be returned.
         """
-        self.log.info("mycroft.api.info message received")
-
+        self.log.debug("mycroft.api.info message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            config = Configuration.get(cache=False, remote=False)
+            data: dict = {}
+            if _connected_google:
+                api = DeviceApi().get()
+                data = {
+                    "core_version": api["core_version"],
+                    "device_uuid": api["uuid"],
+                    "name": api["name"]
+                }
+            data = {
+                "audio_backend":
+                    config.get("audio", "Audio")["default-backend"],
+                "city": config["location"]["city"]["name"],
+                "country":
+                    config["location"]["city"]["state"]["country"]["name"],
+                "lang": config["lang"],
+                "platform": config["enclosure"].get("platform", "unknown"),
+                "timezone": config["location"]["timezone"]["code"],
+                "tts_engine": config["tts"]["module"]
+            }
+            self.bus.emit(
+                Message(CONSTANT_MSG_TYPE["info"],
+                        data=data,
+                        context=self.context)
+            )
 
 
 def create_skill():
