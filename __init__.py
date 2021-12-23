@@ -166,7 +166,7 @@ class Api(MycroftSkill):
             try:
                 Path(SLEEP_MARK).touch()
                 send(self,
-                     f'{CONSTANT_MSG_TYPE["sleep"]}.answer',
+                     f'{CONSTANT_MSG_TYPE["sleep_answer"]}.answer',
                      data={"mark": SLEEP_MARK})
             except IOError as err:
                 self.log.err(err)

@@ -7,6 +7,7 @@ CONSTANT_MSG_TYPE = {
     "config": f"{MSG_PREFIX}.config",
     "skill_settings": f"{MSG_PREFIX}.skill_settings",
     "sleep": "recognizer_loop:sleep",
+    "sleep_answer": "{MSG_PREFIX}.sleep",
 }
 SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 TMP_DIR = "/tmp/mycroft"
