@@ -2,4 +2,5 @@
 """
 CONSTANT_MSG_TYPE = {
     "info": "mycroft.api.info.answer",
+    "connectivity": "mycroft.api.connectivity"
 }
