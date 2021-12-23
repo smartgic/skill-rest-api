@@ -8,7 +8,7 @@ from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
 from .utils import check_auth, send
-from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR
+from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, TMP_DIR
 
 
 class Api(MycroftSkill):
@@ -45,7 +45,8 @@ class Api(MycroftSkill):
                        self._handle_info)
         self.add_event(CONSTANT_MSG_TYPE["config"],
                        self._handle_config)
-
+        self.add_event(CONSTANT_MSG_TYPE["sleep"],
+                       self._handle_sleep)
         # Network
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
                        self._handle_connectivity)
@@ -141,9 +142,9 @@ class Api(MycroftSkill):
         self.log.debug("mycroft.api.skill_settings message detected")
         check_auth(self, message)
         if self.authenticated:
-            home = str(Path.home())
-            skill = message.data.get('skill')
-            file = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
+            home: str = str(Path.home())
+            skill: str = message.data.get('skill')
+            file: str = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
             if Path(file).is_file():
                 try:
                     with open(file) as settings_json:
@@ -152,6 +153,21 @@ class Api(MycroftSkill):
                              data=json.load(settings_json))
                 except IOError as err:
                     self.log.err(err)
+
+    def _handle_sleep(self) -> None:
+        """When mycroft.api.sleep event is detected on the bus,
+        this function will create an empty file into /tmp/mycroft. This file
+        will be looked up by the _handle_is_awake() method to determine if
+        mycroft is into sleep mode or awake.
+        """
+        try:
+            sleep_mark: str = Path(f"{TMP_DIR}/sleepy.mark")
+            sleep_mark.touch()
+            send(self,
+                 f'{CONSTANT_MSG_TYPE["sleep"]}.answer',
+                 data={"mark": sleep_mark})
+        except IOError as err:
+            self.log.err(err)
 
 
 def create_skill():
