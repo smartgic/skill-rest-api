@@ -68,11 +68,13 @@ class Api(MycroftSkill):
         self.log.debug("mycroft.api.info message detected")
         check_auth(self, message)
         if self.authenticated:
+            self.log.debug("mycroft.api.info authenticated")
             config = Configuration.get(cache=False, remote=False)
             data: dict = {}
+            data_api: dict = {}
             if _connected_google:
                 api = DeviceApi().get()
-                data = {
+                data_api = {
                     "core_version": api["coreVersion"],
                     "device_uuid": api["uuid"],
                     "name": api["name"]
@@ -88,6 +90,7 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
+            data |= data_api
             self.bus.emit(
                 Message(CONSTANT_MSG_TYPE["info"],
                         data=data,
