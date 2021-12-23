@@ -64,7 +64,7 @@ class Api(MycroftSkill):
         self.add_event(MSG_TYPE["skill_settings"],
                        self._handle_skill_settings)
         self.add_event(MSG_TYPE["skill_install"],
-                       self._handle_skill_settings)
+                       self._handle_skill_install)
 
     def initialize(self) -> None:
         """The initialize method is called after the Skill is fully
