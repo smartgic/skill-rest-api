@@ -1,6 +1,6 @@
 """Constants used across the skill
 """
 CONSTANT_MSG_TYPE = {
-    "info": "mycroft.api.info.answer",
+    "info": "mycroft.api.info",
     "connectivity": "mycroft.api.connectivity"
 }
