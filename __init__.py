@@ -240,7 +240,7 @@ class Api(MycroftSkill):
                 tts: str = self.config_core["tts"]["module"].capitalize()
                 tts_path: str = f"{TTS_CACHE_DIR}/{tts}TTS"
                 try:
-                    status = delete(tts_path)
+                    status = delete(self, tts_path)
                 except IOError as err:
                     self.log.error("unable to clear tts cache")
                     self.log.debug(err)
