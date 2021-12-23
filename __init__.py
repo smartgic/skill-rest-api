@@ -155,7 +155,7 @@ class Api(MycroftSkill):
                              data=json.load(settings_json))
                 except IOError as err:
                     self.log.error("unable to retrieve skill settings")
-                    self.lof.debug(err)
+                    self.log.debug(err)
 
     def _handle_sleep(self, message: dict) -> None:
         """When recognizer_loop:sleep event is detected on the bus,
@@ -173,7 +173,7 @@ class Api(MycroftSkill):
                      data={"mark": SLEEP_MARK})
             except IOError as err:
                 self.log.error("unable to generate the sleep mark")
-                self.lof.debug(err)
+                self.log.debug(err)
 
     def _handle_wake_up(self, message: dict) -> None:
         """When recognizer_loop:wake_up event is detected on the bus,
@@ -191,7 +191,7 @@ class Api(MycroftSkill):
                      data={"mark": "sleep mark deleted"})
             except IOError as err:
                 self.log.error("unable to delete the sleep mark")
-                self.lof.debug(err)
+                self.log.debug(err)
 
 
 def create_skill():
