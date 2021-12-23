@@ -67,7 +67,6 @@ class Api(MycroftSkill):
         self.log.debug("mycroft.api.info message detected")
         check_auth(self, message)
         if self.authenticated:
-            self.log.debug("mycroft.api.info authenticated")
             config = Configuration.get(cache=False, remote=False)
             data_local: dict = {}
             data_api: dict = {}
@@ -89,10 +88,9 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
-            data = {**data_api, **data_local}
             self.bus.emit(
                 Message(CONSTANT_MSG_TYPE["info"],
-                        data=data,
+                        data={**data_api, **data_local},
                         context={"authenticated": self.authenticated})
             )
 
