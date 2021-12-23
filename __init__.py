@@ -244,7 +244,7 @@ class Api(MycroftSkill):
                 except IOError as err:
                     self.log.error("unable to clear tts cache")
                     self.log.debug(err)
-            send(f'{CONSTANT_MSG_TYPE["cache"]}.answer',
+            send(self, f'{CONSTANT_MSG_TYPE["cache"]}.answer',
                  data={"cache_type": cache_type, "status": status})
 
 
