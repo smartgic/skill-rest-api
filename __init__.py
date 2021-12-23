@@ -95,7 +95,7 @@ class Api(MycroftSkill):
                 "tts_engine": config["tts"]["module"]
             }
             self.bus.emit(
-                Message(CONSTANT_MSG_TYPE["info"] + ".answer",
+                Message(f'{CONSTANT_MSG_TYPE["info"]}.answer',
                         data={**data_api, **data_local},
                         context={"authenticated": self.authenticated})
             )
@@ -109,7 +109,7 @@ class Api(MycroftSkill):
         check_auth(self, message)
         if self.authenticated:
             self.bus.emit(
-                Message(CONSTANT_MSG_TYPE["connectivity"] + ".answer",
+                Message(f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
                         data=_connected_google(),
                         context={"authenticated": self.authenticated})
             )
