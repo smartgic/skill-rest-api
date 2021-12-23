@@ -8,9 +8,7 @@ from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
 from .utils import check_auth, send
-from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, \
-    AWAKE_MARK
-
+from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK
 
 class Api(MycroftSkill):
     """This is the place where all the magic happens for the api skill.
@@ -49,7 +47,7 @@ class Api(MycroftSkill):
         self.add_event(CONSTANT_MSG_TYPE["sleep"],
                        self._handle_sleep)
         self.add_event(CONSTANT_MSG_TYPE["wake_up"],
-                       self._handle_awake)
+                       self._handle_wake_up)
 
         # Network
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
@@ -173,11 +171,12 @@ class Api(MycroftSkill):
                      f'{CONSTANT_MSG_TYPE["sleep_answer"]}.answer',
                      data={"mark": SLEEP_MARK})
             except IOError as err:
-                self.log.err(err)
+                self.log.err("unable to generate the sleep mark")
+                self.lof.debug(err)
 
-    def _handle_awake(self, message: dict) -> None:
+    def _handle_wake_up(self, message: dict) -> None:
         """When recognizer_loop:wake_up event is detected on the bus,
-        this function will create an empty file into /tmp/mycroft. This file
+        this function will remove the sleep mark. This file
         will be looked up by the _handle_is_awake() method to determine if
         mycroft is into sleep mode or awake.
         """
@@ -185,12 +184,13 @@ class Api(MycroftSkill):
         check_auth(self, message)
         if self.authenticated:
             try:
-                Path(AWAKE_MARK).touch()
+                Path(SLEEP_MARK).unlink()
                 send(self,
                      f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
-                     data={"mark": AWAKE_MARK})
+                     data={"mark": "sleep mark deleted"})
             except IOError as err:
-                self.log.err(err)
+                self.log.err("unable to delete the sleep mark")
+                self.lof.debug(err)
 
 
 def create_skill():
