@@ -70,7 +70,7 @@ class Api(MycroftSkill):
         if self.authenticated:
             self.log.debug("mycroft.api.info authenticated")
             config = Configuration.get(cache=False, remote=False)
-            data: dict = {}
+            data_local: dict = {}
             data_api: dict = {}
             if _connected_google:
                 api = DeviceApi().get()
@@ -79,7 +79,7 @@ class Api(MycroftSkill):
                     "device_uuid": api["uuid"],
                     "name": api["name"]
                 }
-            data = {
+            data_local = {
                 "audio_backend":
                     config.get("audio", "Audio")["default-backend"],
                 "city": config["location"]["city"]["name"],
@@ -90,7 +90,7 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
-            data |= data_api
+            data = {**data_local, **data_local}
             self.bus.emit(
                 Message(CONSTANT_MSG_TYPE["info"],
                         data=data,
