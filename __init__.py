@@ -49,6 +49,8 @@ class Api(MycroftSkill):
                        self._handle_sleep)
         self.add_event(CONSTANT_MSG_TYPE["wake_up"],
                        self._handle_wake_up)
+        self.add_event(CONSTANT_MSG_TYPE["is_awake"],
+                       self._handle_is_awake)
 
         # Network
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
@@ -198,6 +200,25 @@ class Api(MycroftSkill):
                      data={"mark": "no sleep mark to delete"})
             except IOError as err:
                 self.log.error("unable to delete the sleep mark")
+                self.log.debug(err)
+
+    def _handle_is_awake(self, message: dict) -> None:
+        """When mycroft.api.is_awake event is detected on the bus,
+        this function will looke for a /tmp/mycroft/sleep.mark file to
+        determine if mycroft is into sleep mode or awake.
+        """
+        self.log.debug("mycroft.api.is_awake message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            is_awake: bool = True
+            try:
+                if Path(SLEEP_MARK).is_file():
+                    is_awake = False
+                send(self,
+                     f'{CONSTANT_MSG_TYPE["is_awake"]}.answer',
+                     data={"is_awake": is_awake})
+            except IOError as err:
+                self.log.error("unable to retrieve sleep mark")
                 self.log.debug(err)
 
 

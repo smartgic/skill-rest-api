@@ -10,6 +10,7 @@ CONSTANT_MSG_TYPE = {
     "sleep_answer": f"{MSG_PREFIX}.sleep",
     "wake_up": "recognizer_loop:wake_up",
     "wake_up_answer": f"{MSG_PREFIX}.wake_up",
+    "is_awake": f"{MSG_PREFIX}.is_awake",
 }
 SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 TMP_DIR = "/tmp/mycroft"
