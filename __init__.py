@@ -3,6 +3,7 @@
 from mycroft import MycroftSkill
 from mycroft.api import DeviceApi
 from mycroft.configuration import Configuration
+from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google
 from .utils import check_auth, send
 from .constants import CONSTANT_MSG_TYPE
@@ -40,6 +41,8 @@ class Api(MycroftSkill):
         # System
         self.add_event(CONSTANT_MSG_TYPE["info"],
                        self._handle_info)
+        self.add_event(CONSTANT_MSG_TYPE["config"],
+                       self._handle_config)
 
         # Network
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
@@ -96,7 +99,7 @@ class Api(MycroftSkill):
             send(self, f'{CONSTANT_MSG_TYPE["info"]}.answer',
                  data={**data_api, **data_local})
 
-    def _handle_connectivity(self, message):
+    def _handle_connectivity(self, message: dict) -> None:
         """When mycroft.api.connectivity event is detected on the bus,
         this function will use the _connected_google() function from mycroft
         core to detect if the instance is connected to Internet.
@@ -106,6 +109,23 @@ class Api(MycroftSkill):
         if self.authenticated:
             send(self, f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
                  data=_connected_google())
+
+    def _handle_config(self, message: dict) -> None:
+        """When mycroft.api.config event is detected on the bus, this function
+        will use the LocalConf() function from mycroft core to retrieve the
+        "custom" configuration from mycroft.conf.
+
+        If message.data.get('core') is True then only the core configuration
+        will be retrieved.
+        """
+        self.log.debug("mycroft.api.config message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            data: dict = LocalConf(USER_CONFIG)
+            if message.data.get('core'):
+                data = self.config_core
+            send(self, f'{CONSTANT_MSG_TYPE["config"]}.answer',
+                 data=data)
 
 
 def create_skill():
