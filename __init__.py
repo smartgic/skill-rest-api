@@ -1,12 +1,14 @@
 """api entrypoint skill
 """
+import json
 from mycroft import MycroftSkill
 from mycroft.api import DeviceApi
 from mycroft.configuration import Configuration
 from mycroft.configuration.config import LocalConf, USER_CONFIG
-from mycroft.util.network_utils import _connected_google
+from mycroft.util.network_utils import _connected_google as ping_google
+from pathlib import Path
 from .utils import check_auth, send
-from .constants import CONSTANT_MSG_TYPE
+from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR
 
 
 class Api(MycroftSkill):
@@ -48,6 +50,10 @@ class Api(MycroftSkill):
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
                        self._handle_connectivity)
 
+        # Skill
+        self.add_event(CONSTANT_MSG_TYPE["skill_settings"],
+                       self._handle_skill_settings)
+
     def initialize(self) -> None:
         """The initialize method is called after the Skill is fully
         constructed and registered with the system. It is used to perform
@@ -78,7 +84,7 @@ class Api(MycroftSkill):
             config = Configuration.get(cache=False, remote=False)
             data_local: dict = {}
             data_api: dict = {}
-            if _connected_google:
+            if ping_google():
                 api = DeviceApi().get()
                 data_api = {
                     "core_version": api["coreVersion"],
@@ -108,7 +114,7 @@ class Api(MycroftSkill):
         check_auth(self, message)
         if self.authenticated:
             send(self, f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
-                 data=_connected_google())
+                 data=ping_google())
 
     def _handle_config(self, message: dict) -> None:
         """When mycroft.api.config event is detected on the bus, this function
@@ -126,6 +132,26 @@ class Api(MycroftSkill):
                 data = self.config_core
             send(self, f'{CONSTANT_MSG_TYPE["config"]}.answer',
                  data=data)
+
+    def _handle_skill_settings(self, message: dict) -> None:
+        """When mycroft.api.skill_settings event is detected on the bus,
+        this function will look for a settings.json file from the skill config
+        directory and read load the content as JSON.
+        """
+        self.log.debug("mycroft.api.skill_settings message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            home = str(Path.home())
+            skill = message.data.get('skill')
+            file = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
+            if Path(file).is_file():
+                try:
+                    with open(file) as settings_json:
+                        send(self,
+                             f'{CONSTANT_MSG_TYPE["skill_settings"]}.answer',
+                             data=json.load(settings_json))
+                except IOError as err:
+                    self.log.err(err)
 
 
 def create_skill():
