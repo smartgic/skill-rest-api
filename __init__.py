@@ -73,7 +73,7 @@ class Api(MycroftSkill):
             if _connected_google:
                 api = DeviceApi().get()
                 data = {
-                    "core_version": api["core_version"],
+                    "core_version": api["coreVersion"],
                     "device_uuid": api["uuid"],
                     "name": api["name"]
                 }
