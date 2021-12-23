@@ -10,6 +10,7 @@ from pathlib import Path
 from .utils import check_auth, send
 from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK
 
+
 class Api(MycroftSkill):
     """This is the place where all the magic happens for the api skill.
     """
@@ -185,10 +186,11 @@ class Api(MycroftSkill):
         check_auth(self, message)
         if self.authenticated:
             try:
-                Path(SLEEP_MARK).unlink()
-                send(self,
-                     f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
-                     data={"mark": "sleep mark deleted"})
+                if Path(SLEEP_MARK).is_file():
+                    Path(SLEEP_MARK).unlink()
+                    send(self,
+                         f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
+                         data={"mark": "sleep mark deleted"})
             except IOError as err:
                 self.log.error("unable to delete the sleep mark")
                 self.log.debug(err)
