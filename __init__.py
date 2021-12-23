@@ -38,7 +38,13 @@ class Api(MycroftSkill):
         """Handle the events sent on the bus and trigger functions when
         received.
         """
-        self.add_event("mycroft.api.info", self._handle_info)
+        # System
+        self.add_event(CONSTANT_MSG_TYPE["info"],
+                       self._handle_info)
+
+        # Network
+        self.add_event(CONSTANT_MSG_TYPE["connectivity"],
+                       self._handle_connectivity)
 
     def initialize(self) -> None:
         """The initialize method is called after the Skill is fully
@@ -91,6 +97,19 @@ class Api(MycroftSkill):
             self.bus.emit(
                 Message(CONSTANT_MSG_TYPE["info"],
                         data={**data_api, **data_local},
+                        context={"authenticated": self.authenticated})
+            )
+
+    def _handle_connectivity(self, message):
+        """When mycroft.api.connectivity event is detected on the bus,
+        this function will use the _connected_google() function from mycroft
+        core to detect if the instance is connected to Internet.
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            self.bus.emit(
+                Message(CONSTANT_MSG_TYPE["connectivity"],
+                        data=_connected_google(),
                         context={"authenticated": self.authenticated})
             )
 
