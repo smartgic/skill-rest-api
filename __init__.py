@@ -155,12 +155,12 @@ class Api(MycroftSkill):
                     self.log.err(err)
 
     def _handle_sleep(self, message: dict) -> None:
-        """When mycroft.api.sleep event is detected on the bus,
+        """When recognizer_loop:sleep event is detected on the bus,
         this function will create an empty file into /tmp/mycroft. This file
         will be looked up by the _handle_is_awake() method to determine if
         mycroft is into sleep mode or awake.
         """
-        self.log.debug("mycroft.api.sleep message detected")
+        self.log.debug("recognizer_loop:sleep message detected")
         check_auth(self, message)
         if self.authenticated:
             try:
