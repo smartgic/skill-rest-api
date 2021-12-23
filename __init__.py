@@ -157,6 +157,8 @@ class Api(MycroftSkill):
                 except IOError as err:
                     self.log.error("unable to retrieve skill settings")
                     self.log.debug(err)
+            send(self, f'{CONSTANT_MSG_TYPE["skill_settings"]}.answer',
+                 data={"error": "no settings.json file found"})
 
     def _handle_sleep(self, message: dict) -> None:
         """When recognizer_loop:sleep event is detected on the bus,
