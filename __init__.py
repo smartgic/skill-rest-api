@@ -7,8 +7,9 @@ from mycroft.configuration import Configuration
 from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
-from .utils import check_auth, send
-from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK
+from .utils import check_auth, delete, send, delete
+from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, \
+    TTS_CACHE_DIR
 
 
 class Api(MycroftSkill):
@@ -51,6 +52,8 @@ class Api(MycroftSkill):
                        self._handle_wake_up)
         self.add_event(CONSTANT_MSG_TYPE["is_awake"],
                        self._handle_is_awake)
+        self.add_event(CONSTANT_MSG_TYPE["cache"],
+                       self._handle_cache)
 
         # Network
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
@@ -220,6 +223,23 @@ class Api(MycroftSkill):
             except IOError as err:
                 self.log.error("unable to retrieve sleep mark")
                 self.log.debug(err)
+
+    def _handle_cache(self, message: dict) -> None:
+        self.log.debug("mycroft.api.cache message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            cache_type: str = message.data.get("cache_type")
+            if cache_type == "tts":
+                tts: str = self.config_core["tts"]["module"].capitalize()
+                tts_path: str = f"{TTS_CACHE_DIR}/{tts}TTS"
+                try:
+                    delete_status: bool = delete(tts_path)
+                    send(f'{CONSTANT_MSG_TYPE["cache"]}.answer',
+                         data={"cache_type": cache_type,
+                               "status": delete_status})
+                except IOError as err:
+                    self.log.error("unable to clear cache")
+                    self.log.debug(err)
 
 
 def create_skill():
