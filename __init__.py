@@ -8,7 +8,8 @@ from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
 from .utils import check_auth, send
-from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK
+from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, \
+    AWAKE_MARK
 
 
 class Api(MycroftSkill):
@@ -47,6 +48,9 @@ class Api(MycroftSkill):
                        self._handle_config)
         self.add_event(CONSTANT_MSG_TYPE["sleep"],
                        self._handle_sleep)
+        self.add_event(CONSTANT_MSG_TYPE["wake_up"],
+                       self._handle_awake)
+
         # Network
         self.add_event(CONSTANT_MSG_TYPE["connectivity"],
                        self._handle_connectivity)
@@ -168,6 +172,23 @@ class Api(MycroftSkill):
                 send(self,
                      f'{CONSTANT_MSG_TYPE["sleep_answer"]}.answer',
                      data={"mark": SLEEP_MARK})
+            except IOError as err:
+                self.log.err(err)
+
+    def _handle_awake(self, message: dict) -> None:
+        """When recognizer_loop:wake_up event is detected on the bus,
+        this function will create an empty file into /tmp/mycroft. This file
+        will be looked up by the _handle_is_awake() method to determine if
+        mycroft is into sleep mode or awake.
+        """
+        self.log.debug("recognizer_loop:wake_up message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            try:
+                Path(AWAKE_MARK).touch()
+                send(self,
+                     f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
+                     data={"mark": AWAKE_MARK})
             except IOError as err:
                 self.log.err(err)
 
