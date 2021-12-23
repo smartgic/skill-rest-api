@@ -1,10 +1,12 @@
 """api entrypoint skill
 """
 import json
+from msm.exceptions import AlreadyInstalled, InstallException
 from mycroft import MycroftSkill
 from mycroft.api import DeviceApi
 from mycroft.configuration import Configuration
 from mycroft.configuration.config import LocalConf, USER_CONFIG
+from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
 from .utils import check_auth, delete, send
@@ -60,6 +62,8 @@ class Api(MycroftSkill):
 
         # Skill
         self.add_event(MSG_TYPE["skill_settings"],
+                       self._handle_skill_settings)
+        self.add_event(MSG_TYPE["skill_install"],
                        self._handle_skill_settings)
 
     def initialize(self) -> None:
@@ -245,6 +249,31 @@ class Api(MycroftSkill):
                     self.log.debug(err)
             send(self, f'{MSG_TYPE["cache"]}.answer',
                  data={"cache_type": cache_type, "status": status})
+
+    def _handle_skill_install(self, message: dict) -> None:
+        self.log.debug("mycroft.api.skill_install message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            msm_config = build_msm_config(self.config_core)
+            msm = create_msm(msm_config)
+            skill_url: str = message.data.get("url")
+            confirm: bool = message.data.get("confirm")
+            try:
+                msm.install(skill_url)
+                if confirm:
+                    utterance: str = message.data.get("dialog")
+                    lang: str = message.data.get("lang")
+                    send(self, MSG_TYPE["speak"],
+                         data={"utterance": utterance, "lang": lang})
+                send(self, f'{MSG_TYPE["skill_install"]}.answer',
+                     data={"skill": message.data.get("url")})
+            except AlreadyInstalled:
+                send(self, f'{MSG_TYPE["skill_install"]}.answer',
+                     data={"skill": "already installed"})
+                pass
+            except InstallException as err:
+                self.log.error("unable to install the skill")
+                self.log.debug(err)
 
 
 def create_skill():
