@@ -154,20 +154,23 @@ class Api(MycroftSkill):
                 except IOError as err:
                     self.log.err(err)
 
-    def _handle_sleep(self) -> None:
+    def _handle_sleep(self, message: dict) -> None:
         """When mycroft.api.sleep event is detected on the bus,
         this function will create an empty file into /tmp/mycroft. This file
         will be looked up by the _handle_is_awake() method to determine if
         mycroft is into sleep mode or awake.
         """
-        try:
-            sleep_mark: str = Path(f"{TMP_DIR}/sleepy.mark")
-            sleep_mark.touch()
-            send(self,
-                 f'{CONSTANT_MSG_TYPE["sleep"]}.answer',
-                 data={"mark": sleep_mark})
-        except IOError as err:
-            self.log.err(err)
+        self.log.debug("mycroft.api.sleep message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            try:
+                sleep_mark: str = Path(f"{TMP_DIR}/sleepy.mark")
+                sleep_mark.touch()
+                send(self,
+                     f'{CONSTANT_MSG_TYPE["sleep"]}.answer',
+                     data={"mark": sleep_mark})
+            except IOError as err:
+                self.log.err(err)
 
 
 def create_skill():
