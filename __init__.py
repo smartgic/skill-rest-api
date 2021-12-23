@@ -191,6 +191,9 @@ class Api(MycroftSkill):
                     send(self,
                          f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
                          data={"mark": "sleep mark deleted"})
+                send(self,
+                     f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
+                     data={"mark": "no sleep mark to delete"})
             except IOError as err:
                 self.log.error("unable to delete the sleep mark")
                 self.log.debug(err)
