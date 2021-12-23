@@ -93,7 +93,7 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
-            send(f'{CONSTANT_MSG_TYPE["info"]}.answer',
+            send(self, f'{CONSTANT_MSG_TYPE["info"]}.answer',
                  data={**data_api, **data_local})
 
     def _handle_connectivity(self, message):
@@ -104,7 +104,7 @@ class Api(MycroftSkill):
         self.log.debug("mycroft.api.connectivity message detected")
         check_auth(self, message)
         if self.authenticated:
-            send(f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
+            send(self, f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
                  data=_connected_google())
 
 
