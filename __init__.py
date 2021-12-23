@@ -7,9 +7,8 @@ from mycroft.configuration import Configuration
 from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.util.network_utils import _connected_google as ping_google
 from pathlib import Path
-from .utils import check_auth, delete, send, delete
-from .constants import CONSTANT_MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, \
-    TTS_CACHE_DIR
+from .utils import check_auth, delete, send
+from .constants import MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DIR
 
 
 class Api(MycroftSkill):
@@ -42,25 +41,25 @@ class Api(MycroftSkill):
         received.
         """
         # System
-        self.add_event(CONSTANT_MSG_TYPE["info"],
+        self.add_event(MSG_TYPE["info"],
                        self._handle_info)
-        self.add_event(CONSTANT_MSG_TYPE["config"],
+        self.add_event(MSG_TYPE["config"],
                        self._handle_config)
-        self.add_event(CONSTANT_MSG_TYPE["sleep"],
+        self.add_event(MSG_TYPE["sleep"],
                        self._handle_sleep)
-        self.add_event(CONSTANT_MSG_TYPE["wake_up"],
+        self.add_event(MSG_TYPE["wake_up"],
                        self._handle_wake_up)
-        self.add_event(CONSTANT_MSG_TYPE["is_awake"],
+        self.add_event(MSG_TYPE["is_awake"],
                        self._handle_is_awake)
-        self.add_event(CONSTANT_MSG_TYPE["cache"],
+        self.add_event(MSG_TYPE["cache"],
                        self._handle_cache)
 
         # Network
-        self.add_event(CONSTANT_MSG_TYPE["connectivity"],
+        self.add_event(MSG_TYPE["connectivity"],
                        self._handle_connectivity)
 
         # Skill
-        self.add_event(CONSTANT_MSG_TYPE["skill_settings"],
+        self.add_event(MSG_TYPE["skill_settings"],
                        self._handle_skill_settings)
 
     def initialize(self) -> None:
@@ -111,7 +110,7 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
-            send(self, f'{CONSTANT_MSG_TYPE["info"]}.answer',
+            send(self, f'{MSG_TYPE["info"]}.answer',
                  data={**data_api, **data_local})
 
     def _handle_connectivity(self, message: dict) -> None:
@@ -122,7 +121,7 @@ class Api(MycroftSkill):
         self.log.debug("mycroft.api.connectivity message detected")
         check_auth(self, message)
         if self.authenticated:
-            send(self, f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
+            send(self, f'{MSG_TYPE["connectivity"]}.answer',
                  data=ping_google())
 
     def _handle_config(self, message: dict) -> None:
@@ -139,7 +138,7 @@ class Api(MycroftSkill):
             data: dict = LocalConf(USER_CONFIG)
             if message.data.get('core'):
                 data = self.config_core
-            send(self, f'{CONSTANT_MSG_TYPE["config"]}.answer',
+            send(self, f'{MSG_TYPE["config"]}.answer',
                  data=data)
 
     def _handle_skill_settings(self, message: dict) -> None:
@@ -157,12 +156,12 @@ class Api(MycroftSkill):
                 try:
                     with open(file) as settings_json:
                         send(self,
-                             f'{CONSTANT_MSG_TYPE["skill_settings"]}.answer',
+                             f'{MSG_TYPE["skill_settings"]}.answer',
                              data=json.load(settings_json))
                 except IOError as err:
                     self.log.error("unable to retrieve skill settings")
                     self.log.debug(err)
-            send(self, f'{CONSTANT_MSG_TYPE["skill_settings"]}.answer',
+            send(self, f'{MSG_TYPE["skill_settings"]}.answer',
                  data={"error": "no settings.json file found"})
 
     def _handle_sleep(self, message: dict) -> None:
@@ -177,7 +176,7 @@ class Api(MycroftSkill):
             try:
                 Path(SLEEP_MARK).touch()
                 send(self,
-                     f'{CONSTANT_MSG_TYPE["sleep_answer"]}.answer',
+                     f'{MSG_TYPE["sleep_answer"]}.answer',
                      data={"mark": SLEEP_MARK})
             except IOError as err:
                 self.log.error("unable to generate the sleep mark")
@@ -196,10 +195,10 @@ class Api(MycroftSkill):
                 if Path(SLEEP_MARK).is_file():
                     Path(SLEEP_MARK).unlink()
                     send(self,
-                         f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
+                         f'{MSG_TYPE["wake_up_answer"]}.answer',
                          data={"mark": "sleep mark deleted"})
                 send(self,
-                     f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
+                     f'{MSG_TYPE["wake_up_answer"]}.answer',
                      data={"mark": "no sleep mark to delete"})
             except IOError as err:
                 self.log.error("unable to delete the sleep mark")
@@ -218,7 +217,7 @@ class Api(MycroftSkill):
                 if Path(SLEEP_MARK).is_file():
                     is_awake = False
                 send(self,
-                     f'{CONSTANT_MSG_TYPE["is_awake"]}.answer',
+                     f'{MSG_TYPE["is_awake"]}.answer',
                      data={"is_awake": is_awake})
             except IOError as err:
                 self.log.error("unable to retrieve sleep mark")
@@ -244,7 +243,7 @@ class Api(MycroftSkill):
                 except IOError as err:
                     self.log.error("unable to clear tts cache")
                     self.log.debug(err)
-            send(self, f'{CONSTANT_MSG_TYPE["cache"]}.answer',
+            send(self, f'{MSG_TYPE["cache"]}.answer',
                  data={"cache_type": cache_type, "status": status})
 
 
