@@ -2,10 +2,9 @@
 """
 from mycroft import MycroftSkill
 from mycroft.api import DeviceApi
-from mycroft.messagebus.message import Message
 from mycroft.configuration import Configuration
 from mycroft.util.network_utils import _connected_google
-from .utils import check_auth
+from .utils import check_auth, send
 from .constants import CONSTANT_MSG_TYPE
 
 
@@ -94,11 +93,8 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
-            self.bus.emit(
-                Message(f'{CONSTANT_MSG_TYPE["info"]}.answer',
-                        data={**data_api, **data_local},
-                        context={"authenticated": self.authenticated})
-            )
+            send(f'{CONSTANT_MSG_TYPE["info"]}.answer',
+                 data={**data_api, **data_local})
 
     def _handle_connectivity(self, message):
         """When mycroft.api.connectivity event is detected on the bus,
@@ -108,11 +104,8 @@ class Api(MycroftSkill):
         self.log.debug("mycroft.api.connectivity message detected")
         check_auth(self, message)
         if self.authenticated:
-            self.bus.emit(
-                Message(f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
-                        data=_connected_google(),
-                        context={"authenticated": self.authenticated})
-            )
+            send(f'{CONSTANT_MSG_TYPE["connectivity"]}.answer',
+                 data=_connected_google())
 
 
 def create_skill():

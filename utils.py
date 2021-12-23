@@ -57,3 +57,14 @@ def delete(self, directory: str, parent: bool = False) -> bool:
     except OSError as err:
         self.log.debug(f"unable to delete {directory} directory: {err}")
         return False
+
+
+def send(self, msg_type: str, data: dict) -> None:
+    """This function is a wrapper to send message to the bus with pre-exiting
+    data.
+
+    It wraps self.bus.emit(Message()) which avoid to have to load twice the
+    same library and avoid code duplication.
+    """
+    self.bus.emit(Message(msg_type, data=data,
+                          context={"authenticated": self.authenticated}))
