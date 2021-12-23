@@ -64,6 +64,7 @@ class Api(MycroftSkill):
         If there is no Internet connection then only local information will
         be returned.
         """
+        self.log.debug("mycroft.api.info message received")
         check_auth(self, message)
         if self.authenticated:
             config = Configuration.get(cache=False, remote=False)
