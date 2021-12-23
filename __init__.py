@@ -19,7 +19,6 @@ class Api(MycroftSkill):
         self.api_key: str
         self.authenticated: bool = False
         self.configured: bool = False
-        self.context: dict = {"authenticated": self.authenticated}
         self.settings_change_callback = None
 
     def _setup(self) -> None:
@@ -94,7 +93,7 @@ class Api(MycroftSkill):
             self.bus.emit(
                 Message(CONSTANT_MSG_TYPE["info"],
                         data=data,
-                        context=self.context)
+                        context={"authenticated": self.authenticated})
             )
 
 
