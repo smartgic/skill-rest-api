@@ -57,7 +57,7 @@ class Api(MycroftSkill):
         """
         self._setup()
 
-    def _handle_info(self, message) -> None:
+    def _handle_info(self, message):
         """When mycroft.api.info event is detected on the bus, this function
         will collect information from local and remote location.
 
