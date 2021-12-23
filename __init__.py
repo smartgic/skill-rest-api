@@ -65,33 +65,7 @@ class Api(MycroftSkill):
         be returned.
         """
         self.log.info("mycroft.api.info message received")
-        check_auth(self, message)
-        if self.authenticated:
-            config = Configuration.get(cache=False, remote=False)
-            data: dict = {}
-            if _connected_google:
-                api = DeviceApi().get()
-                data = {
-                    "core_version": api["core_version"],
-                    "device_uuid": api["uuid"],
-                    "name": api["name"]
-                }
-            data = {
-                "audio_backend":
-                    config.get("audio", "Audio")["default-backend"],
-                "city": config["location"]["city"]["name"],
-                "country":
-                    config["location"]["city"]["state"]["country"]["name"],
-                "lang": config["lang"],
-                "platform": config["enclosure"].get("platform", "unknown"),
-                "timezone": config["location"]["timezone"]["code"],
-                "tts_engine": config["tts"]["module"]
-            }
-            self.bus.emit(
-                Message(CONSTANT_MSG_TYPE["info"],
-                        data=data,
-                        context=self.context)
-            )
+
 
 
 def create_skill():
