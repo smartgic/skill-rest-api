@@ -90,7 +90,7 @@ class Api(MycroftSkill):
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"]
             }
-            data = {**data_local, **data_local}
+            data = {**data_api, **data_local}
             self.bus.emit(
                 Message(CONSTANT_MSG_TYPE["info"],
                         data=data,
