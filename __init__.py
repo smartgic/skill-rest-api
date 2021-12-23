@@ -225,21 +225,27 @@ class Api(MycroftSkill):
                 self.log.debug(err)
 
     def _handle_cache(self, message: dict) -> None:
+        """When mycroft.api.cache event is detected on the bus,
+        this function remove cache (files and/or directories) related to the
+        type.
+
+        For now only TTS cache removal is supported.
+        """
         self.log.debug("mycroft.api.cache message detected")
         check_auth(self, message)
         if self.authenticated:
             cache_type: str = message.data.get("cache_type")
+            status: bool = False
             if cache_type == "tts":
                 tts: str = self.config_core["tts"]["module"].capitalize()
                 tts_path: str = f"{TTS_CACHE_DIR}/{tts}TTS"
                 try:
-                    delete_status: bool = delete(tts_path)
-                    send(f'{CONSTANT_MSG_TYPE["cache"]}.answer',
-                         data={"cache_type": cache_type,
-                               "status": delete_status})
+                    status = delete(tts_path)
                 except IOError as err:
-                    self.log.error("unable to clear cache")
+                    self.log.error("unable to clear tts cache")
                     self.log.debug(err)
+            send(f'{CONSTANT_MSG_TYPE["cache"]}.answer',
+                 data={"cache_type": cache_type, "status": status})
 
 
 def create_skill():
