@@ -154,7 +154,8 @@ class Api(MycroftSkill):
                              f'{CONSTANT_MSG_TYPE["skill_settings"]}.answer',
                              data=json.load(settings_json))
                 except IOError as err:
-                    self.log.err(err)
+                    self.log.error("unable to retrieve skill settings")
+                    self.lof.debug(err)
 
     def _handle_sleep(self, message: dict) -> None:
         """When recognizer_loop:sleep event is detected on the bus,
@@ -171,7 +172,7 @@ class Api(MycroftSkill):
                      f'{CONSTANT_MSG_TYPE["sleep_answer"]}.answer',
                      data={"mark": SLEEP_MARK})
             except IOError as err:
-                self.log.err("unable to generate the sleep mark")
+                self.log.error("unable to generate the sleep mark")
                 self.lof.debug(err)
 
     def _handle_wake_up(self, message: dict) -> None:
@@ -189,7 +190,7 @@ class Api(MycroftSkill):
                      f'{CONSTANT_MSG_TYPE["wake_up_answer"]}.answer',
                      data={"mark": "sleep mark deleted"})
             except IOError as err:
-                self.log.err("unable to delete the sleep mark")
+                self.log.error("unable to delete the sleep mark")
                 self.lof.debug(err)
 
 
