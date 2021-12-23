@@ -95,7 +95,7 @@ class Api(MycroftSkill):
                 "tts_engine": config["tts"]["module"]
             }
             self.bus.emit(
-                Message(CONSTANT_MSG_TYPE["info"],
+                Message(CONSTANT_MSG_TYPE["info"] + ".answer",
                         data={**data_api, **data_local},
                         context={"authenticated": self.authenticated})
             )
@@ -105,10 +105,11 @@ class Api(MycroftSkill):
         this function will use the _connected_google() function from mycroft
         core to detect if the instance is connected to Internet.
         """
+        self.log.debug("mycroft.api.connectivity message detected")
         check_auth(self, message)
         if self.authenticated:
             self.bus.emit(
-                Message(CONSTANT_MSG_TYPE["connectivity"],
+                Message(CONSTANT_MSG_TYPE["connectivity"] + ".answer",
                         data=_connected_google(),
                         context={"authenticated": self.authenticated})
             )
