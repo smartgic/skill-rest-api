@@ -1,4 +1,4 @@
-"""api entrypoint skill
+"""rest-api entrypoint skill
 """
 import json
 from pathlib import Path
@@ -14,7 +14,7 @@ from .utils import check_auth, delete, send
 from .constants import MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DIR
 
 
-class Api(MycroftSkill):
+class RestApi(MycroftSkill):
     """This is the place where all the magic happens for the api skill.
     """
     def __init__(self):
@@ -317,4 +317,4 @@ class Api(MycroftSkill):
 def create_skill():
     """Main function to register the skill
     """
-    return Api()
+    return RestApi()
