@@ -1,8 +1,8 @@
 """api entrypoint skill
 """
 import json
-from msm.exceptions import AlreadyInstalled, InstallException, AlreadyRemoved, \
-    RemoveException
+from msm.exceptions import AlreadyInstalled, InstallException, \
+    AlreadyRemoved, RemoveException, MultipleSkillMatches
 from mycroft import MycroftSkill
 from mycroft.api import DeviceApi
 from mycroft.configuration import Configuration
@@ -305,6 +305,12 @@ class Api(MycroftSkill):
                 send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
                      data={"skill": "already uninstalled"})
                 pass
+            except MultipleSkillMatches as err:
+                send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
+                     data={"skill": "multiple matches found"})
+                self.log.warning("unable to uninstall because of "
+                                 "mutliple matches")
+                self.log.debug(err)
             except RemoveException as err:
                 self.log.error("unable to uninstall the skill")
                 self.log.debug(err)
