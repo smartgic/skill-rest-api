@@ -1,3 +1,4 @@
+---
 skillMetadata:
   sections:
     - name: Authentification with Mycroft REST API
@@ -5,7 +6,10 @@ skillMetadata:
         - type: label
           label: >
             <p>
-            In order to communicate with each other, this skill and the Mycroft REST API requires an authentication based on an API key. This API key could be found within the Mycroft REST API configuration file.
+            In order to communicate with each other, this skill and the
+            Mycroft REST API requires an authentication based on an API key.
+            This API key could be found within the Mycroft REST API
+            configuration file.
             <p/>
         - name: api_key
           type: password

@@ -1,6 +1,7 @@
 """api entrypoint skill
 """
 import json
+from pathlib import Path
 from msm.exceptions import AlreadyInstalled, InstallException, \
     AlreadyRemoved, RemoveException, MultipleSkillMatches
 from mycroft import MycroftSkill
@@ -9,7 +10,6 @@ from mycroft.configuration import Configuration
 from mycroft.configuration.config import LocalConf, USER_CONFIG
 from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from mycroft.util.network_utils import _connected_google as ping_google
-from pathlib import Path
 from .utils import check_auth, delete, send
 from .constants import MSG_TYPE, SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DIR
 
@@ -161,7 +161,7 @@ class Api(MycroftSkill):
             file: str = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
             if Path(file).is_file():
                 try:
-                    with open(file) as settings_json:
+                    with open(file, encoding="utf-8") as settings_json:
                         send(self,
                              f'{MSG_TYPE["skill_settings"]}.answer',
                              data=json.load(settings_json))
@@ -276,7 +276,6 @@ class Api(MycroftSkill):
             except AlreadyInstalled:
                 send(self, f'{MSG_TYPE["skill_install"]}.answer',
                      data={"skill": "already installed"})
-                pass
             except InstallException as err:
                 self.log.error("unable to install the skill")
                 self.log.debug(err)
@@ -304,7 +303,6 @@ class Api(MycroftSkill):
             except AlreadyRemoved:
                 send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
                      data={"skill": "already uninstalled"})
-                pass
             except MultipleSkillMatches as err:
                 send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
                      data={"skill": "multiple matches found, not uninstalled"})
