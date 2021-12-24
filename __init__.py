@@ -307,7 +307,7 @@ class Api(MycroftSkill):
                 pass
             except MultipleSkillMatches as err:
                 send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
-                     data={"skill": "multiple matches found"})
+                     data={"skill": "multiple matches found, not uninstalled"})
                 self.log.warning("unable to uninstall because of "
                                  "mutliple matches")
                 self.log.debug(err)
