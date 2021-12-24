@@ -21,7 +21,7 @@ class RestApi(MycroftSkill):
         MycroftSkill.__init__(self)
 
         # Initialize variables with values (or not).
-        self.api_key: str
+        self.api_key: str = None
         self.authenticated: bool = False
         self.configured: bool = False
         self.settings_change_callback = None
