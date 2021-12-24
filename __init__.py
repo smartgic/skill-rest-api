@@ -1,7 +1,8 @@
 """api entrypoint skill
 """
 import json
-from msm.exceptions import AlreadyInstalled, InstallException
+from msm.exceptions import AlreadyInstalled, InstallException, AlreadyRemoved, \
+    RemoveException
 from mycroft import MycroftSkill
 from mycroft.api import DeviceApi
 from mycroft.configuration import Configuration
@@ -251,28 +252,59 @@ class Api(MycroftSkill):
                  data={"cache_type": cache_type, "status": status})
 
     def _handle_skill_install(self, message: dict) -> None:
+        """When mycroft.api.skill_install event is detected on the bus,
+        this function install a skill based on the Git repository provided.
+        """
         self.log.debug("mycroft.api.skill_install message detected")
         check_auth(self, message)
         if self.authenticated:
-            msm_config = build_msm_config(self.config_core)
-            msm = create_msm(msm_config)
-            skill_url: str = message.data.get("url")
+            skill: str = message.data.get("skill")
             confirm: bool = message.data.get("confirm")
             try:
-                msm.install(skill_url)
+                msm_config = build_msm_config(self.config_core)
+                msm = create_msm(msm_config)
+                msm.install(skill)
                 if confirm:
                     utterance: str = message.data.get("dialog")
                     lang: str = message.data.get("lang")
                     send(self, MSG_TYPE["speak"],
                          data={"utterance": utterance, "lang": lang})
                 send(self, f'{MSG_TYPE["skill_install"]}.answer',
-                     data={"skill": message.data.get("url")})
+                     data={"skill": skill})
             except AlreadyInstalled:
                 send(self, f'{MSG_TYPE["skill_install"]}.answer',
                      data={"skill": "already installed"})
                 pass
             except InstallException as err:
                 self.log.error("unable to install the skill")
+                self.log.debug(err)
+
+    def _handle_skill_uninstall(self, message: dict) -> None:
+        """When mycroft.api.skill_uninstall event is detected on the bus,
+        this function uninstall a skill based on the skill ID.
+        """
+        self.log.debug("mycroft.api.skill_uninstall message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            skill: str = message.data.get("skill")
+            confirm: bool = message.data.get("confirm")
+            try:
+                msm_config = build_msm_config(self.config_core)
+                msm = create_msm(msm_config)
+                msm.remove(skill)
+                if confirm:
+                    utterance: str = message.data.get("dialog")
+                    lang: str = message.data.get("lang")
+                    send(self, MSG_TYPE["speak"],
+                         data={"utterance": utterance, "lang": lang})
+                send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
+                     data={"skill": skill})
+            except AlreadyRemoved:
+                send(self, f'{MSG_TYPE["skill_uninstall"]}.answer',
+                     data={"skill": "already uninstalled"})
+                pass
+            except RemoveException as err:
+                self.log.error("unable to uninstall the skill")
                 self.log.debug(err)
 
 

@@ -7,6 +7,7 @@ MSG_TYPE = {
     "config": f"{MSG_PREFIX}.config",
     "skill_settings": f"{MSG_PREFIX}.skill_settings",
     "skill_install": f"{MSG_PREFIX}.skill_install",
+    "skill_uninstall": f"{MSG_PREFIX}.skill_uninstall",
     "sleep": "recognizer_loop:sleep",
     "sleep_answer": f"{MSG_PREFIX}.sleep",
     "wake_up": "recognizer_loop:wake_up",
