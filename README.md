@@ -12,7 +12,7 @@ Acts as a gateway between Mycroft AI core and Mycroft REST API.
 
 The Mycroft REST API allows an interaction with a Mycroft AI core instance without to log into it or without any voice interaction. The communication between this skill and the REST API uses an autentication token to enforce the security.
 
-<img alt="API flow" src="docs/flow.png" width="500px">
+<img alt="API flow" src="docs/flow.png">
 
 
 ## Examples
