@@ -6,14 +6,18 @@
 
 # REST API
 
+Acts as a gateway between Mycroft AI core and Mycroft REST API.
 
 ## About
 
+The Mycroft REST API allows an interaction with a Mycroft AI core instance without to log into it or without any voice interaction. The communication between this skill and the REST API uses an autentication token to enforce the security.
+
+<img alt="API flow" src="docs/flow.png" width="500px">
 
 
 ## Examples
 
-
+Noi voice interaction.
 
 ## Installation
 
@@ -27,6 +31,10 @@ $ msm install https://github.com/smartgic/mycroft-rest-api-skill.git
 ## Configuration
 
 This skill utilizes the `settings.json` file which allows you to configure this skill via `home.mycroft.ai` after a few seconds of having the skill installed you should see something like below in the https://home.mycroft.ai/#/skill location:
+
+<img src='docs/rest-api-config.png' width='450'/>
+
+The APi key shoudl be retrieved from the Mycroft REST API configuration file.
 
 Fill this out with your appropriate information and hit the `save` button.
 
