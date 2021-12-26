@@ -34,7 +34,14 @@ This skill utilizes the `settings.json` file which allows you to configure this 
 
 <img src='docs/rest-api-config.png' width='450'/>
 
-The APi key shoudl be retrieved from the Mycroft REST API configuration file.
+The APi key should be retrieved from the Mycroft REST API `.env` file.
+
+```ini
+SECRET="557622baf088a6a4bee012c90f9097a23ec23ad6ce20eae9"
+WS_URI="ws://192.168.1.97:8181/core"
+ADMIN="goldyfruit"
+API_KEY="bg80e453765a80d825988fe70c2c9b85d2a5494e720cecet"
+```
 
 Fill this out with your appropriate information and hit the `save` button.
 
