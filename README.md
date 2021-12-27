@@ -17,7 +17,7 @@ The Mycroft REST API allows an interaction with a Mycroft AI core instance witho
 
 ## Examples
 
-Noi voice interaction.
+No voice interaction because the skill will mostly interact with an API.
 
 ## Installation
 
