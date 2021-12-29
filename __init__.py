@@ -58,8 +58,10 @@ class RestApi(MycroftSkill):
                        self._handle_cache)
 
         # Network
-        self.add_event(MSG_TYPE["connectivity"],
-                       self._handle_connectivity)
+        self.add_event(MSG_TYPE["internet"],
+                       self._handle_internet_connectivity)
+        self.add_event(MSG_TYPE["websocket"],
+                       self._handle_websocket_connectivity)
 
         # Skill
         self.add_event(MSG_TYPE["skill_settings"],
@@ -120,16 +122,27 @@ class RestApi(MycroftSkill):
             send(self, f'{MSG_TYPE["info"]}.answer',
                  data={**data_api, **data_local})
 
-    def _handle_connectivity(self, message: dict) -> None:
-        """When mycroft.api.connectivity event is detected on the bus,
+    def _handle_internet_connectivity(self, message: dict) -> None:
+        """When mycroft.api.internet event is detected on the bus,
         this function will use the _connected_google() function from mycroft
         core to detect if the instance is connected to Internet.
         """
-        self.log.debug("mycroft.api.connectivity message detected")
+        self.log.debug("mycroft.api.internet message detected")
         check_auth(self, message)
         if self.authenticated:
-            send(self, f'{MSG_TYPE["connectivity"]}.answer',
+            send(self, f'{MSG_TYPE["internet"]}.answer',
                  data=ping_google())
+
+    def _handle_websocket_connectivity(self, message: dict) -> None:
+        """When mycroft.api.websocket event is detected on the bus,
+        this function will use the _connected_google() function from mycroft
+        core to detect if the instance is connected to Internet.
+        """
+        self.log.debug("mycroft.api.websocket message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            send(self, f'{MSG_TYPE["websocket"]}.answer',
+                 data={"listening": True})
 
     def _handle_config(self, message: dict) -> None:
         """When mycroft.api.config event is detected on the bus, this function

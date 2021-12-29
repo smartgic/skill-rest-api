@@ -2,19 +2,20 @@
 """
 MSG_PREFIX = "mycroft.api"
 MSG_TYPE = {
-    "info": f"{MSG_PREFIX}.info",
-    "connectivity": f"{MSG_PREFIX}.connectivity",
+    "cache": f"{MSG_PREFIX}.cache",
+    "internet": f"{MSG_PREFIX}.internet",
     "config": f"{MSG_PREFIX}.config",
+    "info": f"{MSG_PREFIX}.info",
+    "is_awake": f"{MSG_PREFIX}.is_awake",
     "skill_settings": f"{MSG_PREFIX}.skill_settings",
     "skill_install": f"{MSG_PREFIX}.skill_install",
     "skill_uninstall": f"{MSG_PREFIX}.skill_uninstall",
     "sleep": "recognizer_loop:sleep",
+    "speak": "speak",
     "sleep_answer": f"{MSG_PREFIX}.sleep",
     "wake_up": "recognizer_loop:wake_up",
     "wake_up_answer": f"{MSG_PREFIX}.wake_up",
-    "is_awake": f"{MSG_PREFIX}.is_awake",
-    "cache": f"{MSG_PREFIX}.cache",
-    "speak": "speak",
+    "websocket": f"{MSG_PREFIX}.websocket",
 }
 SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 TMP_DIR = "/tmp/mycroft"
