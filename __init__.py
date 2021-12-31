@@ -258,7 +258,7 @@ class RestApi(MycroftSkill):
             if cache_type == "tts":
                 tts: str = self.config_core["tts"]["module"].capitalize()
                 tts_path: str = f"{TTS_CACHE_DIR}/{tts}TTS"
-                if tts == "mimic" or tts == "mimic2":
+                if tts == "Mimic" or tts == "Mimic2":
                     tts_path: str = f"{TTS_CACHE_DIR}/{tts}"
                 try:
                     status = delete(self, tts_path)
