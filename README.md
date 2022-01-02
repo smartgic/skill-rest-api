@@ -38,9 +38,10 @@ The APi key should be retrieved from the Mycroft REST API `.env` file.
 
 ```ini
 SECRET="557622baf088a6a4bee012c90f9097a23ec23ad6ce20eae9"
-WS_URI="ws://192.168.1.97:8181/core"
-ADMIN="goldyfruit"
+WS_HOST="10.12.50.20"
+WS_PORT="8181"
 API_KEY="bg80e453765a80d825988fe70c2c9b85d2a5494e720cecet"
+USERS_DB="/users.json"
 ```
 
 Fill this out with your appropriate information and hit the `save` button.
