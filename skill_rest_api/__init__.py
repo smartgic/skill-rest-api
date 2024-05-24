@@ -20,6 +20,10 @@ from .constants import MSG_TYPE  # , SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DI
 class RestApiSkill(OVOSSkill):
     """This is the place where all the magic happens for the api skill."""
 
+    @property
+    def api_key(self):
+        return self.settings.get("api_key")
+
     @classproperty
     def runtime_requirements(self):
         """Check for skill functionalities requirements before trying to
@@ -41,7 +45,6 @@ class RestApiSkill(OVOSSkill):
         """Provision initialized variables and retrieve configuration
         from home.mycroft.ai.
         """
-        self.api_key = self.settings.get("api_key")
 
         # Make sure the requirements are fulfill.
         if not self.api_key:
