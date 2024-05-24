@@ -41,16 +41,6 @@ def get_version():
     return version
 
 
-def get_requirements(requirements_filename: str):
-    requirements_file = path.join(path.dirname(__file__), requirements_filename)
-    with open(requirements_file, "r", encoding="utf-8") as r:
-        requirements = r.readlines()
-    requirements = [
-        r.strip() for r in requirements if r.strip() and not r.strip().startswith("#")
-    ]
-    return requirements
-
-
 def find_resource_files():
     resource_base_dirs = ("locale", "intents", "dialog", "vocab", "regex", "ui")
     package_data = ["*.json", "*.wav", "*.mp3"]
