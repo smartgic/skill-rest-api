@@ -55,7 +55,7 @@ class RestApiSkill(OVOSSkill):
 
         self.add_event(MSG_TYPE["internet"], self._handle_internet_connectivity)
         self.add_event(MSG_TYPE["sleep"], self._handle_sleep)
-        self.add_event(MSG_TYPE["wake_up"], self._handle_is_awake)
+        self.add_event(MSG_TYPE["wake_up"], self._handle_wake_up)
         self.add_event(MSG_TYPE["is_awake"], self._handle_is_awake)
 
     # def handle_events(self) -> None:
