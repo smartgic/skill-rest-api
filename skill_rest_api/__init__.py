@@ -333,7 +333,7 @@ class RestApiSkill(OVOSSkill):
         self.settings_change_callback = self.on_settings_changed
         self.on_settings_changed()
 
-    def on_websettings_changed(self) -> None:
+    def on_settings_changed(self) -> None:
         """Each OVOS device will check for updates to a users settings
         regularly, and write these to the skill's settings.json.
         https://openvoiceos.github.io/ovos-technical-manual/skill_settings
