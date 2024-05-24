@@ -14,7 +14,7 @@ from ovos_workshop.skills import OVOSSkill
 # from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from ovos_utils.network_utils import is_connected
 from .utils import check_auth, send  # , delete
-from .constants import MSG_TYPE  # , SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DIR
+from .constants import MSG_TYPE, SLEEP_MARK  # , SKILLS_CONFIG_DIR, TTS_CACHE_DIR
 
 
 class RestApiSkill(OVOSSkill):
