@@ -13,7 +13,7 @@ from ovos_workshop.skills import OVOSSkill
 # from mycroft.configuration.config import LocalConf, USER_CONFIG
 # from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from ovos_utils.network_utils import is_connected
-from .utils import check_auth  # , delete, send
+from .utils import check_auth, send  # , delete, send
 from .constants import MSG_TYPE  # , SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DIR
 
 
