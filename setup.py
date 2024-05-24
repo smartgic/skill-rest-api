@@ -71,7 +71,7 @@ setup(
     package_data={SKILL_PKG: find_resource_files()},
     packages=[SKILL_PKG],
     include_package_data=True,
-    install_requires=get_requirements("requirements.txt"),
+    install_requires="requirements.txt",
     keywords="ovos skill voice assistant",
     entry_points={"ovos.plugin.skill": PLUGIN_ENTRY_POINT},
 )
