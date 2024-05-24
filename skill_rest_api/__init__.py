@@ -84,18 +84,6 @@ class RestApiSkill(OVOSSkill):
     #     self.add_event(MSG_TYPE["skill_uninstall"],
     #                    self._handle_skill_uninstall)
 
-    def initialize(self) -> None:
-        """The initialize method is called after the Skill is fully
-        constructed and registered with the system. It is used to perform
-        any final setup for the Skill including accessing Skill settings.
-        https://tinyurl.com/4pevkdhj
-        """
-        self.api_key: str = None
-        self.authenticated: bool = False
-        self.configured: bool = False
-        self.settings_change_callback = self.on_settings_changed
-        self.on_settings_changed()
-
     # def _handle_info(self, message: dict) -> None:
     #     """When mycroft.api.info event is detected on the bus, this function
     #     will collect information from local and remote location.
@@ -129,13 +117,6 @@ class RestApiSkill(OVOSSkill):
     #         }
     #         send(self, f'{MSG_TYPE["info"]}.answer',
     #              data={**data_api, **data_local})
-
-    def on_websettings_changed(self) -> None:
-        """Each OVOS device will check for updates to a users settings
-        regularly, and write these to the skill's settings.json.
-        https://openvoiceos.github.io/ovos-technical-manual/skill_settings
-        """
-        self._setup()
 
     def _handle_internet_connectivity(self, message: Message) -> None:
         """When ovos.api.internet event is detected on the bus,
@@ -338,3 +319,23 @@ class RestApiSkill(OVOSSkill):
     #         except RemoveException as err:
     #             self.log.error("unable to uninstall the skill")
     #             self.log.debug(err)
+
+    def initialize(self) -> None:
+        """The initialize method is called after the Skill is fully
+        constructed and registered with the system. It is used to perform
+        any final setup for the Skill including accessing Skill settings.
+        https://openvoiceos.github.io/ovos-technical-manual/skill_structure/#initialize
+        """
+        self.api_key: str = None
+        self.authenticated: bool = False
+        self.configured: bool = False
+
+        self.settings_change_callback = self.on_settings_changed
+        self.on_settings_changed()
+
+    def on_websettings_changed(self) -> None:
+        """Each OVOS device will check for updates to a users settings
+        regularly, and write these to the skill's settings.json.
+        https://openvoiceos.github.io/ovos-technical-manual/skill_settings
+        """
+        self._setup()
