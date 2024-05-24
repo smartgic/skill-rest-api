@@ -56,6 +56,7 @@ class RestApiSkill(OVOSSkill):
         self.add_event(MSG_TYPE["internet"], self._handle_internet_connectivity)
         self.add_event(MSG_TYPE["sleep"], self._handle_sleep)
         self.add_event(MSG_TYPE["wake_up"], self._handle_is_awake)
+        self.add_event(MSG_TYPE["is_awake"], self._handle_is_awake)
 
     # def handle_events(self) -> None:
     #     """Handle the events sent on the bus and trigger functions when
@@ -214,12 +215,16 @@ class RestApiSkill(OVOSSkill):
             try:
                 if Path(SLEEP_MARK).is_file():
                     Path(SLEEP_MARK).unlink()
-                    send(self,
-                         f'{MSG_TYPE["wake_up_answer"]}.answer',
-                         data={"mark": "sleep mark deleted"})
-                send(self,
-                     f'{MSG_TYPE["wake_up_answer"]}.answer',
-                     data={"mark": "no sleep mark to delete"})
+                    send(
+                        self,
+                        f'{MSG_TYPE["wake_up_answer"]}.answer',
+                        data={"mark": "sleep mark deleted"},
+                    )
+                send(
+                    self,
+                    f'{MSG_TYPE["wake_up_answer"]}.answer',
+                    data={"mark": "no sleep mark to delete"},
+                )
             except IOError as err:
                 LOG.error("unable to delete the sleep mark")
                 LOG.debug(err)
