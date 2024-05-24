@@ -329,7 +329,6 @@ class RestApiSkill(OVOSSkill):
         any final setup for the Skill including accessing Skill settings.
         https://openvoiceos.github.io/ovos-technical-manual/skill_structure/#initialize
         """
-        self.api_key: str = None
         self.authenticated: bool = False
         self.configured: bool = False
 
