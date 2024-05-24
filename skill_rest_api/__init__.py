@@ -128,7 +128,7 @@ class RestApiSkill(OVOSSkill):
         """
         check_auth(self, message)
         if self.authenticated:
-            send(self, f'{MSG_TYPE["internet"]}.answer', data=is_connected())
+            send(self, f'{MSG_TYPE["internet"]}.answer', data={"status": is_connected()})
 
     # def _handle_websocket_connectivity(self, message: Message) -> None:
     #     """When ovos.api.websocket event is detected on the bus,
