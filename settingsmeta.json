@@ -1,0 +1,24 @@
+{
+  "skillMetadata":
+    {
+      "sections":
+        [
+          {
+            "name": "Authentification with Open Voice OS REST API",
+            "fields":
+              [
+                {
+                  "type": "label",
+                  "label": "<p>In order to communicate with each other, this skill and the Open Voice OS REST API requires an authentication based on an API key. This API key could be found within the Open Voice OS REST API configuration file.<p/>"
+                },
+                {
+                  "name": "api_key",
+                  "type": "password",
+                  "label": "API authentication key",
+                  "value": ""
+                }
+              ]
+          }
+        ]
+    }
+}
