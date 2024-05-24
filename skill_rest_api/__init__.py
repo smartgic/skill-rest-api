@@ -13,7 +13,7 @@ from ovos_workshop.skills import OVOSSkill
 # from mycroft.configuration.config import LocalConf, USER_CONFIG
 # from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from ovos_utils.network_utils import is_connected
-from .utils import check_auth, send  # , delete, send
+from .utils import check_auth, send  # , delete
 from .constants import MSG_TYPE  # , SKILLS_CONFIG_DIR, SLEEP_MARK, TTS_CACHE_DIR
 
 
@@ -43,7 +43,7 @@ class RestApiSkill(OVOSSkill):
 
     def _setup(self) -> None:
         """Provision initialized variables and retrieve configuration
-        from home.mycroft.ai.
+        from settings.json file.
         """
 
         # Make sure the requirements are fulfill.
@@ -179,23 +179,22 @@ class RestApiSkill(OVOSSkill):
     #         send(self, f'{MSG_TYPE["skill_settings"]}.answer',
     #              data={"error": "no settings.json file found"})
 
-    # def _handle_sleep(self, message: dict) -> None:
-    #     """When recognizer_loop:sleep event is detected on the bus,
-    #     this function will create an empty file into /tmp/mycroft. This file
-    #     will be looked up by the _handle_is_awake() method to determine if
-    #     mycroft is into sleep mode or awake.
-    #     """
-    #     self.log.debug("recognizer_loop:sleep message detected")
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         try:
-    #             Path(SLEEP_MARK).touch()
-    #             send(self,
-    #                  f'{MSG_TYPE["sleep_answer"]}.answer',
-    #                  data={"mark": SLEEP_MARK})
-    #         except IOError as err:
-    #             self.log.error("unable to generate the sleep mark")
-    #             self.log.debug(err)
+    def _handle_sleep(self, message: dict) -> None:
+        """When recognizer_loop:sleep event is detected on the bus,
+        this function will create an empty file into /tmp/ovos. This file
+        will be looked up by the _handle_is_awake() method to determine if
+        mycroft is into sleep mode or awake.
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            try:
+                Path(SLEEP_MARK).touch()
+                send(self,
+                     f'{MSG_TYPE["sleep_answer"]}.answer',
+                     data={"mark": SLEEP_MARK})
+            except IOError as err:
+                LOG.error("unable to generate the sleep mark")
+                LOG.debug(err)
 
     # def _handle_wake_up(self, message: dict) -> None:
     #     """When recognizer_loop:wake_up event is detected on the bus,
@@ -239,13 +238,12 @@ class RestApiSkill(OVOSSkill):
     #             self.log.debug(err)
 
     # def _handle_cache(self, message: dict) -> None:
-    #     """When mycroft.api.cache event is detected on the bus,
+    #     """When ovos.api.cache event is detected on the bus,
     #     this function remove cache (files and/or directories) related to the
     #     type.
 
     #     For now only TTS cache removal is supported.
     #     """
-    #     self.log.debug("mycroft.api.cache message detected")
     #     check_auth(self, message)
     #     if self.authenticated:
     #         cache_type: str = message.data.get("cache_type")
