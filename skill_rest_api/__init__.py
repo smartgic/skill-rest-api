@@ -54,6 +54,8 @@ class RestApiSkill(OVOSSkill):
             LOG.info("api key has been registered")
 
         self.add_event(MSG_TYPE["internet"], self._handle_internet_connectivity)
+        self.add_event(MSG_TYPE["sleep"], self._handle_sleep)
+        self.add_event(MSG_TYPE["wake_up"], self._handle_is_awake)
 
     # def handle_events(self) -> None:
     #     """Handle the events sent on the bus and trigger functions when
@@ -128,7 +130,9 @@ class RestApiSkill(OVOSSkill):
         """
         check_auth(self, message)
         if self.authenticated:
-            send(self, f'{MSG_TYPE["internet"]}.answer', data={"status": is_connected()})
+            send(
+                self, f'{MSG_TYPE["internet"]}.answer', data={"status": is_connected()}
+            )
 
     # def _handle_websocket_connectivity(self, message: Message) -> None:
     #     """When ovos.api.websocket event is detected on the bus,
@@ -181,7 +185,7 @@ class RestApiSkill(OVOSSkill):
 
     def _handle_sleep(self, message: dict) -> None:
         """When recognizer_loop:sleep event is detected on the bus,
-        this function will create an empty file into /tmp/ovos. This file
+        this function will create an empty file into /tmp. This file
         will be looked up by the _handle_is_awake() method to determine if
         mycroft is into sleep mode or awake.
         """
@@ -189,53 +193,54 @@ class RestApiSkill(OVOSSkill):
         if self.authenticated:
             try:
                 Path(SLEEP_MARK).touch()
-                send(self,
-                     f'{MSG_TYPE["sleep_answer"]}.answer',
-                     data={"mark": SLEEP_MARK})
+                send(
+                    self,
+                    f'{MSG_TYPE["sleep_answer"]}.answer',
+                    data={"mark": SLEEP_MARK},
+                )
             except IOError as err:
                 LOG.error("unable to generate the sleep mark")
                 LOG.debug(err)
 
-    # def _handle_wake_up(self, message: dict) -> None:
-    #     """When recognizer_loop:wake_up event is detected on the bus,
-    #     this function will remove the sleep mark. This file
-    #     will be looked up by the _handle_is_awake() method to determine if
-    #     mycroft is into sleep mode or awake.
-    #     """
-    #     self.log.debug("recognizer_loop:wake_up message detected")
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         try:
-    #             if Path(SLEEP_MARK).is_file():
-    #                 Path(SLEEP_MARK).unlink()
-    #                 send(self,
-    #                      f'{MSG_TYPE["wake_up_answer"]}.answer',
-    #                      data={"mark": "sleep mark deleted"})
-    #             send(self,
-    #                  f'{MSG_TYPE["wake_up_answer"]}.answer',
-    #                  data={"mark": "no sleep mark to delete"})
-    #         except IOError as err:
-    #             self.log.error("unable to delete the sleep mark")
-    #             self.log.debug(err)
+    def _handle_wake_up(self, message: dict) -> None:
+        """When recognizer_loop:wake_up event is detected on the bus,
+        this function will remove the sleep mark. This file
+        will be looked up by the _handle_is_awake() method to determine if
+        mycroft is into sleep mode or awake.
+        """
+        self.log.debug("recognizer_loop:wake_up message detected")
+        check_auth(self, message)
+        if self.authenticated:
+            try:
+                if Path(SLEEP_MARK).is_file():
+                    Path(SLEEP_MARK).unlink()
+                    send(self,
+                         f'{MSG_TYPE["wake_up_answer"]}.answer',
+                         data={"mark": "sleep mark deleted"})
+                send(self,
+                     f'{MSG_TYPE["wake_up_answer"]}.answer',
+                     data={"mark": "no sleep mark to delete"})
+            except IOError as err:
+                LOG.error("unable to delete the sleep mark")
+                LOG.debug(err)
 
-    # def _handle_is_awake(self, message: dict) -> None:
-    #     """When mycroft.api.is_awake event is detected on the bus,
-    #     this function will looke for a /tmp/mycroft/sleep.mark file to
-    #     determine if mycroft is into sleep mode or awake.
-    #     """
-    #     self.log.debug("mycroft.api.is_awake message detected")
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         is_awake: bool = True
-    #         try:
-    #             if Path(SLEEP_MARK).is_file():
-    #                 is_awake = False
-    #             send(self,
-    #                  f'{MSG_TYPE["is_awake"]}.answer',
-    #                  data={"is_awake": is_awake})
-    #         except IOError as err:
-    #             self.log.error("unable to retrieve sleep mark")
-    #             self.log.debug(err)
+    def _handle_is_awake(self, message: dict) -> None:
+        """When ovos.api.is_awake event is detected on the bus,
+        this function will looke for a /tmp/sleep.mark file to
+        determine if mycroft is into sleep mode or awake.
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            is_awake: bool = True
+            try:
+                if Path(SLEEP_MARK).is_file():
+                    is_awake = False
+                send(
+                    self, f'{MSG_TYPE["is_awake"]}.answer', data={"is_awake": is_awake}
+                )
+            except IOError as err:
+                LOG.error("unable to retrieve sleep mark")
+                LOG.debug(err)
 
     # def _handle_cache(self, message: dict) -> None:
     #     """When ovos.api.cache event is detected on the bus,
