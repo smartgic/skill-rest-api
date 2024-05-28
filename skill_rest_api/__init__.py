@@ -104,7 +104,7 @@ class RestApiSkill(OVOSSkill):
                 },
                 "tts_engine": config["tts"]["module"],
                 "stt_engine": config["stt"]["module"],
-                "log_level": config["log_level"],
+                "log_level": config["log_level"].lower(),
             }
             send(self, f'{MSG_TYPE["info"]}.answer', data=data)
 
