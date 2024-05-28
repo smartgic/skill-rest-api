@@ -91,7 +91,7 @@ class RestApiSkill(OVOSSkill):
                 "core_version": version.OVOS_VERSION_STR,
                 "name": config["listener"]["wake_word"],
                 "audio_backend": config["Audio"]["default-backend"],
-                "location": {
+                "locales": {
                     "city": config["location"]["city"]["name"],
                     "country": config["location"]["city"]["state"]["country"]["name"],
                     "lang": config["lang"],
