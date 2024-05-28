@@ -2,6 +2,7 @@
 """
 
 import json
+import platform
 from pathlib import Path
 from ovos_bus_client.message import Message
 from ovos_config.config import Configuration
@@ -95,6 +96,11 @@ class RestApiSkill(OVOSSkill):
                 "lang": config["lang"],
                 "timezone": config["location"]["timezone"]["code"],
                 "tts_engine": config["tts"]["module"],
+                "stt_engine": config["stt"]["module"],
+                "log_level": config["log_level"],
+                "architecture": platform.machine(),
+                "system": platform.system(),
+                "kernel": platform.release(),
             }
             send(self, f'{MSG_TYPE["info"]}.answer', data=data)
 
