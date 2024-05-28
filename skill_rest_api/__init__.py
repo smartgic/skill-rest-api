@@ -4,12 +4,12 @@
 import json
 from pathlib import Path
 from ovos_bus_client.message import Message
+from ovos_config.config import Configuration
+from ovos_core import version
 from ovos_utils import classproperty
 from ovos_utils.log import LOG
 from ovos_workshop.skills import OVOSSkill
 
-# from mycroft.api import DeviceApi
-# from mycroft.configuration import Configuration
 # from mycroft.configuration.config import LocalConf, USER_CONFIG
 # from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from ovos_utils.network_utils import is_connected
@@ -53,6 +53,7 @@ class RestApiSkill(OVOSSkill):
             self.configured = True
             LOG.info("api key has been registered")
 
+        self.add_event(MSG_TYPE["info"], self._handle_info)
         self.add_event(MSG_TYPE["internet"], self._handle_internet_connectivity)
         self.add_event(MSG_TYPE["sleep"], self._handle_sleep)
         self.add_event(MSG_TYPE["wake_up"], self._handle_wake_up)
@@ -67,21 +68,8 @@ class RestApiSkill(OVOSSkill):
     #                    self._handle_info)
     #     self.add_event(MSG_TYPE["config"],
     #                    self._handle_config)
-    #     self.add_event(MSG_TYPE["sleep"],
-    #                    self._handle_sleep)
-    #     self.add_event(MSG_TYPE["wake_up"],
-    #                    self._handle_wake_up)
-    #     self.add_event(MSG_TYPE["is_awake"],
-    #                    self._handle_is_awake)
     #     self.add_event(MSG_TYPE["cache"],
     #                    self._handle_cache)
-
-    #     # Network
-    #     self.add_event(MSG_TYPE["internet"],
-    #                    self._handle_internet_connectivity)
-    #     self.add_event(MSG_TYPE["websocket"],
-    #                    self._handle_websocket_connectivity)
-
     #     # Skill
     #     self.add_event(MSG_TYPE["skill_settings"],
     #                    self._handle_skill_settings)
@@ -90,39 +78,25 @@ class RestApiSkill(OVOSSkill):
     #     self.add_event(MSG_TYPE["skill_uninstall"],
     #                    self._handle_skill_uninstall)
 
-    # def _handle_info(self, message: dict) -> None:
-    #     """When mycroft.api.info event is detected on the bus, this function
-    #     will collect information from local and remote location.
-
-    #     If there is no Internet connection then only local information will
-    #     be returned.
-    #     """
-    #     self.log.debug("mycroft.api.info message detected")
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         config = Configuration.get(cache=False, remote=False)
-    #         data_local: dict = {}
-    #         data_api: dict = {}
-    #         if ping_google():
-    #             api = DeviceApi().get()
-    #             data_api = {
-    #                 "core_version": api["coreVersion"],
-    #                 "device_uuid": api["uuid"],
-    #                 "name": api["name"]
-    #             }
-    #         data_local = {
-    #             "audio_backend":
-    #                 config.get("audio", "Audio")["default-backend"],
-    #             "city": config["location"]["city"]["name"],
-    #             "country":
-    #                 config["location"]["city"]["state"]["country"]["name"],
-    #             "lang": config["lang"],
-    #             "platform": config["enclosure"].get("platform", "unknown"),
-    #             "timezone": config["location"]["timezone"]["code"],
-    #             "tts_engine": config["tts"]["module"]
-    #         }
-    #         send(self, f'{MSG_TYPE["info"]}.answer',
-    #              data={**data_api, **data_local})
+    def _handle_info(self, message: Message) -> None:
+        """When ovos.api.info event is detected on the bus, this function
+        will collect some information
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            config = Configuration()
+            data: dict = {}
+            data = {
+                "core_version": version.OVOS_VERSION_STR,
+                "name": config["listener"]["wake_word"],
+                "audio_backend": config["Audio"]["default-backend"],
+                "city": config["location"]["city"]["name"],
+                "country": config["location"]["city"]["state"]["country"]["name"],
+                "lang": config["lang"],
+                "timezone": config["location"]["timezone"]["code"],
+                "tts_engine": config["tts"]["module"],
+            }
+            send(self, f'{MSG_TYPE["info"]}.answer', data=data)
 
     def _handle_internet_connectivity(self, message: Message) -> None:
         """When ovos.api.internet event is detected on the bus,
