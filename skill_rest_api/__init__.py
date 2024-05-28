@@ -91,16 +91,20 @@ class RestApiSkill(OVOSSkill):
                 "core_version": version.OVOS_VERSION_STR,
                 "name": config["listener"]["wake_word"],
                 "audio_backend": config["Audio"]["default-backend"],
-                "city": config["location"]["city"]["name"],
-                "country": config["location"]["city"]["state"]["country"]["name"],
-                "lang": config["lang"],
-                "timezone": config["location"]["timezone"]["code"],
+                "location": {
+                    "city": config["location"]["city"]["name"],
+                    "country": config["location"]["city"]["state"]["country"]["name"],
+                    "lang": config["lang"],
+                    "timezone": config["location"]["timezone"]["code"],
+                },
+                "system": {
+                    "architecture": platform.machine(),
+                    "os": platform.system(),
+                    "kernel": platform.release(),
+                },
                 "tts_engine": config["tts"]["module"],
                 "stt_engine": config["stt"]["module"],
                 "log_level": config["log_level"],
-                "architecture": platform.machine(),
-                "system": platform.system(),
-                "kernel": platform.release(),
             }
             send(self, f'{MSG_TYPE["info"]}.answer', data=data)
 
