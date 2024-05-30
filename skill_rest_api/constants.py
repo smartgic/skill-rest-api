@@ -3,7 +3,7 @@
 
 MSG_PREFIX = "ovos.api"
 MSG_TYPE = {
-    # "cache": f"{MSG_PREFIX}.cache",
+    "cache": f"{MSG_PREFIX}.cache",
     "internet": f"{MSG_PREFIX}.internet",
     # "config": f"{MSG_PREFIX}.config",
     "info": f"{MSG_PREFIX}.info",
@@ -20,5 +20,5 @@ MSG_TYPE = {
 }
 # SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 # TMP_DIR = "/tmp/mycroft"
-# TTS_CACHE_DIR = f"{TMP_DIR}/cache/tts"
+TTS_CACHE_DIR = "~./cache/mycroft"
 SLEEP_MARK = "/tmp/sleep.mark"

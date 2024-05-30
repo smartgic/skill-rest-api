@@ -45,26 +45,26 @@ def check_auth(self, message: dict) -> bool:
     return False
 
 
-# def delete(self, directory: str, parent: bool = False) -> bool:
-#     """Delete files and directories from a parent directory
+def delete(self, directory: str, parent: bool = False) -> bool:
+    """Delete files and directories from a parent directory
 
-#     Parent directory is not removed by default, the parent option need to
-#     defined to True.
-#     """
-#     directory = Path(directory)
-#     try:
-#         for item in directory.iterdir():
-#             if item.is_dir():
-#                 item.rmdir(item)
-#             else:
-#                 item.unlink()
-#         if parent:
-#             directory.rmdir()
-#             LOG.debug(f"parent directory {directory} has been removed")
-#         return True
-#     except OSError as err:
-#         LOG.debug(f"unable to delete {directory} directory: {err}")
-#         return False
+    Parent directory is not removed by default, the parent option need to
+    defined to True.
+    """
+    directory = Path(directory)
+    try:
+        for item in directory.iterdir():
+            if item.is_dir():
+                item.rmdir(item)
+            else:
+                item.unlink()
+        if parent:
+            directory.rmdir()
+            LOG.debug(f"parent directory {directory} has been removed")
+        return True
+    except OSError as err:
+        LOG.debug(f"unable to delete {directory} directory: {err}")
+        return False
 
 
 def send(self, msg_type: str, data: dict) -> None:

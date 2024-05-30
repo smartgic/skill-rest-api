@@ -14,8 +14,8 @@ from ovos_workshop.skills import OVOSSkill
 # from mycroft.configuration.config import LocalConf, USER_CONFIG
 # from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from ovos_utils.network_utils import is_connected
-from .utils import check_auth, send  # , delete
-from .constants import MSG_TYPE, SLEEP_MARK  # , SKILLS_CONFIG_DIR, TTS_CACHE_DIR
+from .utils import check_auth, send, delete
+from .constants import MSG_TYPE, SLEEP_MARK, TTS_CACHE_DIR # , SKILLS_CONFIG_DIR
 
 
 class RestApiSkill(OVOSSkill):
@@ -55,6 +55,7 @@ class RestApiSkill(OVOSSkill):
             LOG.info("api key has been registered")
 
         self.add_event(MSG_TYPE["info"], self._handle_info)
+        self.add_event(MSG_TYPE["cache"], self._handle_cache)
         self.add_event(MSG_TYPE["internet"], self._handle_internet_connectivity)
         self.add_event(MSG_TYPE["sleep"], self._handle_sleep)
         self.add_event(MSG_TYPE["wake_up"], self._handle_wake_up)
@@ -90,11 +91,11 @@ class RestApiSkill(OVOSSkill):
             data = {
                 "core_version": version.OVOS_VERSION_STR,
                 "name": config["listener"]["wake_word"],
-                "audio_backend": config["Audio"]["default-backend"],
                 "locales": {
                     "city": config["location"]["city"]["name"],
                     "country": config["location"]["city"]["state"]["country"]["name"],
                     "lang": config["lang"],
+                    "secondary_langs": config.get("secondary_langs", None),
                     "timezone": config["location"]["timezone"]["code"],
                 },
                 "system": {
@@ -231,29 +232,28 @@ class RestApiSkill(OVOSSkill):
                 LOG.error("unable to retrieve sleep mark")
                 LOG.debug(err)
 
-    # def _handle_cache(self, message: dict) -> None:
-    #     """When ovos.api.cache event is detected on the bus,
-    #     this function remove cache (files and/or directories) related to the
-    #     type.
+    def _handle_cache(self, message: dict) -> None:
+        """When ovos.api.cache event is detected on the bus,
+        this function remove cache (files and/or directories) related to the
+        type.
 
-    #     For now only TTS cache removal is supported.
-    #     """
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         cache_type: str = message.data.get("cache_type")
-    #         status: bool = False
-    #         if cache_type == "tts":
-    #             tts: str = self.config_core["tts"]["module"].capitalize()
-    #             tts_path: str = f"{TTS_CACHE_DIR}/{tts}TTS"
-    #             if tts == "Mimic" or tts == "Mimic2":
-    #                 tts_path: str = f"{TTS_CACHE_DIR}/{tts}"
-    #             try:
-    #                 status = delete(self, tts_path)
-    #             except IOError as err:
-    #                 self.log.error("unable to clear tts cache")
-    #                 self.log.debug(err)
-    #         send(self, f'{MSG_TYPE["cache"]}.answer',
-    #              data={"cache_type": cache_type, "status": status})
+        For now only TTS cache removal is supported.
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            config = Configuration()
+            cache_type: str = message.data.get("cache_type")
+            status: bool = False
+            if cache_type == "tts":
+                tts: str = config["tts"]["module"]
+                tts_path: str = f"{TTS_CACHE_DIR}/{tts}"
+                try:
+                    status = delete(self, tts_path)
+                except IOError as err:
+                    self.log.error("unable to clear tts cache")
+                    self.log.debug(err)
+            send(self, f'{MSG_TYPE["cache"]}.answer',
+                 data={"cache_type": cache_type, "status": status})
 
     # def _handle_skill_install(self, message: dict) -> None:
     #     """When mycroft.api.skill_install event is detected on the bus,
