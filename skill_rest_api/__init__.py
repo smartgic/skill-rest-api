@@ -245,13 +245,13 @@ class RestApiSkill(OVOSSkill):
             cache_type: str = message.data.get("cache_type")
             status: bool = False
             if cache_type == "tts":
-                tts: str = config["tts"]["module"]
-                tts_path: str = f"{TTS_CACHE_DIR}/{tts}"
+                tts_module: str = config["tts"]["module"]
+                tts_path: str = f"{TTS_CACHE_DIR}/{tts_module}"
                 try:
                     status = delete(self, tts_path)
                 except IOError as err:
-                    self.log.error("unable to clear tts cache")
-                    self.log.debug(err)
+                    LOG.error("unable to clear tts cache")
+                    LOG.debug(err)
             send(self, f'{MSG_TYPE["cache"]}.answer',
                  data={"cache_type": cache_type, "status": status})
 
