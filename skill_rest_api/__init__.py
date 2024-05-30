@@ -245,8 +245,9 @@ class RestApiSkill(OVOSSkill):
             cache_type: str = message.data.get("cache_type")
             status: bool = False
             if cache_type == "tts":
+                home = Path.home()
                 tts_module: str = config["tts"]["module"]
-                tts_path: str = f"{TTS_CACHE_DIR}/{tts_module}"
+                tts_path: str = f"{home}/{TTS_CACHE_DIR}/{tts_module}"
                 try:
                     status = delete(self, tts_path)
                 except IOError as err:
