@@ -60,22 +60,17 @@ class RestApiSkill(OVOSSkill):
         self.add_event(MSG_TYPE["sleep"], self._handle_sleep)
         self.add_event(MSG_TYPE["wake_up"], self._handle_wake_up)
         self.add_event(MSG_TYPE["is_awake"], self._handle_is_awake)
+        self.add_event(MSG_TYPE["skill_settings"], self._handle_skill_settings)
 
     # def handle_events(self) -> None:
     #     """Handle the events sent on the bus and trigger functions when
     #     received.
     #     """
     #     # System
-    #     self.add_event(MSG_TYPE["info"],
-    #                    self._handle_info)
     #     self.add_event(MSG_TYPE["config"],
     #                    self._handle_config)
-    #     self.add_event(MSG_TYPE["cache"],
-    #                    self._handle_cache)
+
     #     # Skill
-    #     self.add_event(MSG_TYPE["skill_settings"],
-    #                    self._handle_skill_settings)
-    #     self.add_event(MSG_TYPE["skill_install"],
     #                    self._handle_skill_install)
     #     self.add_event(MSG_TYPE["skill_uninstall"],
     #                    self._handle_skill_uninstall)
@@ -154,19 +149,24 @@ class RestApiSkill(OVOSSkill):
         check_auth(self, message)
         if self.authenticated:
             home: str = Path.home()
-            skill: str = message.data.get('skill')
+            skill: str = message.data.get("skill")
             file: str = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
             if Path(file).is_file():
                 try:
                     with open(file, encoding="utf-8") as settings_json:
-                        send(self,
-                             f'{MSG_TYPE["skill_settings"]}.answer',
-                             data=json.load(settings_json))
+                        send(
+                            self,
+                            f'{MSG_TYPE["skill_settings"]}.answer',
+                            data=json.load(settings_json),
+                        )
                 except IOError as err:
                     LOG.error("unable to retrieve skill settings")
                     LOG.debug(err)
-            send(self, f'{MSG_TYPE["skill_settings"]}.answer',
-                 data={"error": "no settings.json file found"})
+            send(
+                self,
+                f'{MSG_TYPE["skill_settings"]}.answer',
+                data={"error": "no settings.json file found"},
+            )
 
     def _handle_sleep(self, message: dict) -> None:
         """When recognizer_loop:sleep event is detected on the bus,
