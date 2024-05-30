@@ -5,6 +5,7 @@ from base64 import b64encode
 from pathlib import Path
 from ovos_bus_client.message import Message
 from ovos_utils.log import LOG
+from shutil import rmtree
 
 
 def check_auth(self, message: dict) -> bool:
@@ -55,11 +56,11 @@ def delete(self, directory: str, parent: bool = False) -> bool:
     try:
         for item in directory.iterdir():
             if item.is_dir():
-                item.rmdir(item)
+                rmtree(item)
             else:
                 item.unlink()
         if parent:
-            directory.rmdir()
+            rmtree(directory)
             LOG.debug(f"parent directory {directory} has been removed")
         return True
     except OSError as err:

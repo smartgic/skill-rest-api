@@ -15,7 +15,7 @@ from ovos_workshop.skills import OVOSSkill
 # from mycroft.skills.msm_wrapper import create_msm, build_msm_config
 from ovos_utils.network_utils import is_connected
 from .utils import check_auth, send, delete
-from .constants import MSG_TYPE, SLEEP_MARK, TTS_CACHE_DIR # , SKILLS_CONFIG_DIR
+from .constants import MSG_TYPE, SLEEP_MARK, TTS_CACHE_DIR  # , SKILLS_CONFIG_DIR
 
 
 class RestApiSkill(OVOSSkill):
@@ -245,16 +245,25 @@ class RestApiSkill(OVOSSkill):
             cache_type: str = message.data.get("cache_type")
             status: bool = False
             if cache_type == "tts":
-                home = Path.home()
+                home: str = Path.home()
+                lang: str = config["lang"]
                 tts_module: str = config["tts"]["module"]
+                tts_voice: str = config["tts"][tts_module]["voice"]
                 tts_path: str = f"{home}/{TTS_CACHE_DIR}/{tts_module}"
                 try:
-                    status = delete(self, tts_path)
+                    delete(self, tts_path)
+                    Path(f"{tts_path}/{tts_voice}/{lang}").mkdir(
+                        parents=True, exist_ok=True
+                    )
+                    status = True
                 except IOError as err:
                     LOG.error("unable to clear tts cache")
                     LOG.debug(err)
-            send(self, f'{MSG_TYPE["cache"]}.answer',
-                 data={"cache_type": cache_type, "status": status})
+            send(
+                self,
+                f'{MSG_TYPE["cache"]}.answer',
+                data={"cache_type": cache_type, "status": status},
+            )
 
     # def _handle_skill_install(self, message: dict) -> None:
     #     """When mycroft.api.skill_install event is detected on the bus,
