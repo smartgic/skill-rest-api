@@ -61,6 +61,7 @@ class RestApiSkill(OVOSSkill):
         self.add_event(MSG_TYPE["wake_up"], self._handle_wake_up)
         self.add_event(MSG_TYPE["is_awake"], self._handle_is_awake)
         self.add_event(MSG_TYPE["skill_settings"], self._handle_skill_settings)
+        self.add_event(MSG_TYPE["config"], self._handle_config)
 
     # def handle_events(self) -> None:
     #     """Handle the events sent on the bus and trigger functions when
@@ -81,7 +82,7 @@ class RestApiSkill(OVOSSkill):
         """
         check_auth(self, message)
         if self.authenticated:
-            config = Configuration()
+            config: dict = Configuration()
             data: dict = {}
             data = {
                 "core_version": version.OVOS_VERSION_STR,
@@ -124,22 +125,15 @@ class RestApiSkill(OVOSSkill):
     #     if self.authenticated:
     #         send(self, f'{MSG_TYPE["websocket"]}.answer', data={"listening": True})
 
-    # def _handle_config(self, message: dict) -> None:
-    #     """When mycroft.api.config event is detected on the bus, this function
-    #     will use the LocalConf() function from mycroft core to retrieve the
-    #     "custom" configuration from mycroft.conf.
-
-    #     If message.data.get('core') is True then the core and local
-    #     configurations will be retrieved.
-    #     """
-    #     self.log.debug("mycroft.api.config message detected")
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         data: dict = LocalConf(USER_CONFIG)
-    #         if message.data.get('core'):
-    #             data = self.config_core
-    #         send(self, f'{MSG_TYPE["config"]}.answer',
-    #              data=data)
+    def _handle_config(self, message: dict) -> None:
+        """When ovos.api.config event is detected on the bus, this function
+        will use the Configuration() function from ovos-config to retrieve the
+        configuration from mycroft.conf.
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            data: dict = Configuration()
+            send(self, f'{MSG_TYPE["config"]}.answer', data=data)
 
     def _handle_skill_settings(self, message: dict) -> None:
         """When ovos.api.skill_settings event is detected on the bus,
@@ -240,7 +234,7 @@ class RestApiSkill(OVOSSkill):
         """
         check_auth(self, message)
         if self.authenticated:
-            config = Configuration()
+            config: dict = Configuration()
             cache_type: str = message.data.get("cache_type")
             status: bool = False
             if cache_type == "tts":

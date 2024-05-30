@@ -5,7 +5,7 @@ MSG_PREFIX = "ovos.api"
 MSG_TYPE = {
     "cache": f"{MSG_PREFIX}.cache",
     "internet": f"{MSG_PREFIX}.internet",
-    # "config": f"{MSG_PREFIX}.config",
+    "config": f"{MSG_PREFIX}.config",
     "info": f"{MSG_PREFIX}.info",
     "is_awake": f"{MSG_PREFIX}.is_awake",
     "skill_settings": f"{MSG_PREFIX}.skill_settings",
