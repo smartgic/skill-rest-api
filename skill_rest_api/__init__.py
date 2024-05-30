@@ -146,28 +146,27 @@ class RestApiSkill(OVOSSkill):
     #         send(self, f'{MSG_TYPE["config"]}.answer',
     #              data=data)
 
-    # def _handle_skill_settings(self, message: dict) -> None:
-    #     """When mycroft.api.skill_settings event is detected on the bus,
-    #     this function will look for a settings.json file from the skill config
-    #     directory and read load the content as JSON.
-    #     """
-    #     self.log.debug("mycroft.api.skill_settings message detected")
-    #     check_auth(self, message)
-    #     if self.authenticated:
-    #         home: str = str(Path.home())
-    #         skill: str = message.data.get('skill')
-    #         file: str = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
-    #         if Path(file).is_file():
-    #             try:
-    #                 with open(file, encoding="utf-8") as settings_json:
-    #                     send(self,
-    #                          f'{MSG_TYPE["skill_settings"]}.answer',
-    #                          data=json.load(settings_json))
-    #             except IOError as err:
-    #                 self.log.error("unable to retrieve skill settings")
-    #                 self.log.debug(err)
-    #         send(self, f'{MSG_TYPE["skill_settings"]}.answer',
-    #              data={"error": "no settings.json file found"})
+    def _handle_skill_settings(self, message: dict) -> None:
+        """When ovos.api.skill_settings event is detected on the bus,
+        this function will look for a settings.json file from the skill config
+        directory and read load the content as JSON.
+        """
+        check_auth(self, message)
+        if self.authenticated:
+            home: str = Path.home()
+            skill: str = message.data.get('skill')
+            file: str = f"{home}/{SKILLS_CONFIG_DIR}/{skill}/settings.json"
+            if Path(file).is_file():
+                try:
+                    with open(file, encoding="utf-8") as settings_json:
+                        send(self,
+                             f'{MSG_TYPE["skill_settings"]}.answer',
+                             data=json.load(settings_json))
+                except IOError as err:
+                    LOG.error("unable to retrieve skill settings")
+                    LOG.debug(err)
+            send(self, f'{MSG_TYPE["skill_settings"]}.answer',
+                 data={"error": "no settings.json file found"})
 
     def _handle_sleep(self, message: dict) -> None:
         """When recognizer_loop:sleep event is detected on the bus,

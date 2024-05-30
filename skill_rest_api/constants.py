@@ -8,7 +8,7 @@ MSG_TYPE = {
     # "config": f"{MSG_PREFIX}.config",
     "info": f"{MSG_PREFIX}.info",
     "is_awake": f"{MSG_PREFIX}.is_awake",
-    # "skill_settings": f"{MSG_PREFIX}.skill_settings",
+    "skill_settings": f"{MSG_PREFIX}.skill_settings",
     # "skill_install": f"{MSG_PREFIX}.skill_install",
     # "skill_uninstall": f"{MSG_PREFIX}.skill_uninstall",
     "sleep": "recognizer_loop:sleep",
@@ -18,7 +18,7 @@ MSG_TYPE = {
     "wake_up_answer": f"{MSG_PREFIX}.wake_up",
     "websocket": f"{MSG_PREFIX}.websocket",
 }
-# SKILLS_CONFIG_DIR = ".config/mycroft/skills"
+SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 # TMP_DIR = "/tmp/mycroft"
 TTS_CACHE_DIR = ".cache/mycroft"
 SLEEP_MARK = "/tmp/sleep.mark"
