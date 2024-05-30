@@ -20,5 +20,5 @@ MSG_TYPE = {
 }
 # SKILLS_CONFIG_DIR = ".config/mycroft/skills"
 # TMP_DIR = "/tmp/mycroft"
-TTS_CACHE_DIR = "./cache/mycroft"
+TTS_CACHE_DIR = ".cache/mycroft"
 SLEEP_MARK = "/tmp/sleep.mark"
