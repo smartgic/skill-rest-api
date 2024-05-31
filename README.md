@@ -1,16 +1,12 @@
-[![Build Status](https://travis-ci.com/smartgic/mycroft-rest-api-skill.svg?branch=21.2.2)](https://travis-ci.com/github/smartgic/mycroft-rest-api-skill) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-pink.svg?style=flat)](https://github.com/smartgic/mycroft-rest-api-skill/pulls) [![Skill: MIT](https://img.shields.io/badge/mycroft.ai-skill-blue)](https://mycroft.ai) [![Discord](https://img.shields.io/discord/809074036733902888)](https://discord.gg/sHM3Duz5d3)
-
-<p align="center">
-  <img alt="Mycrof REST API Skill" src="docs/mycroft-rest-api-logo.png" width="500px">
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-pink.svg?style=flat)](https://github.com/smartgic/skill-rest-api/pulls) [![Skill: MIT](https://img.shields.io/badge/ovos-skill-blue)](https://openvoiceos.org) [![Discord](https://img.shields.io/discord/809074036733902888)](https://discord.gg/sHM3Duz5d3)
 
 # REST API
 
-Acts as a gateway between Mycroft AI core and Mycroft REST API.
+Acts as a gateway between Open Voice OS and OVOS REST API.
 
 ## About
 
-The Mycroft REST API allows an interaction with a Mycroft AI core instance without to log into it or without any voice interaction. The communication between this skill and the REST API uses an autentication token to enforce the security.
+The OVOS REST API allows an interaction with a Mycroft AI core instance without to log into it or without any voice interaction. The communication between this skill and the REST API uses an autentication token to enforce the security.
 
 <img alt="API flow" src="docs/flow.png">
 
@@ -21,20 +17,18 @@ No voice interaction because the skill will mostly interact with an API.
 
 ## Installation
 
-Make sure to be within the Mycroft `virtualenv` before running the `msm` command.
+Make sure to be within the Open Voice OS `virtualenv` before running the `pip` command.
 
 ```shell
-$ . mycroft-core/venv-activate.sh
-$ msm install https://github.com/smartgic/mycroft-rest-api-skill.git
+. ~/.venvs/ovos/bin/activate.sh
+pip3 install git+https://github.com/smartgic/skill-rest-api.git
 ```
 
 ## Configuration
 
-This skill utilizes the `settings.json` file which allows you to configure this skill via `home.mycroft.ai` after a few seconds of having the skill installed you should see something like below in the https://home.mycroft.ai/#/skill location:
+This skill utilizes the `~/.config/mycroft/skills/skill-rest-api.smartgic/settings.json` file which allows you to configure this skill.
 
-<img src='docs/rest-api-config.png' width='450'/>
-
-The APi key should be retrieved from the Mycroft REST API `.env` file.
+The API key should be retrieved from the OVOS REST API `.env` file.
 
 ```ini
 SECRET="557622baf088a6a4bee012c90f9097a23ec23ad6ce20eae9"
@@ -43,9 +37,6 @@ WS_PORT="8181"
 API_KEY="bg80e453765a80d825988fe70c2c9b85d2a5494e720cecet"
 USERS_DB="/users.json"
 ```
-
-Fill this out with your appropriate information and hit the `save` button.
-
 
 ## Credits
 
