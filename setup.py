@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from os import walk, path
 from setuptools import setup
 

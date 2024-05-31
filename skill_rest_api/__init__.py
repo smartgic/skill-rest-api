@@ -67,10 +67,6 @@ class RestApiSkill(OVOSSkill):
     #     """Handle the events sent on the bus and trigger functions when
     #     received.
     #     """
-    #     # System
-    #     self.add_event(MSG_TYPE["config"],
-    #                    self._handle_config)
-
     #     # Skill
     #                    self._handle_skill_install)
     #     self.add_event(MSG_TYPE["skill_uninstall"],
